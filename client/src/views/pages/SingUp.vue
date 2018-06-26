@@ -1,98 +1,123 @@
 <template>
-  <card class="card col-8 center" style="margin:auto;" title="Cree Su Cuenta">
-    <div class="container">
-      <form style="margin:auto;" @submit.prevent>
-        <div class="row">
-          <div class="col-md-5">
-            <fg-input type="text"
-                      label="País"
-                      :disabled="true"
-                      placeholder="País"
-                      v-model="user.pais_id">
-            </fg-input>
-          </div>
-          <div class="col-md-3">
+<div >
+    <form novalidate class="md-layout md-gutter md-alignment-top-center" @submit.prevent="CreateAcount">
+      <md-card class="md-layout-item md-size-50 md-small-size-100">
+        <md-card-header>
+          <div class="md-title">Crear Cuenta</div>
+        </md-card-header>
 
-            <fg-input type="text"
-                      label="Nombres"
-                      placeholder="Nombres"
-                      v-model="user.nombres">
-            </fg-input>
-          </div>
-          <div class="col-md-4">
-            <fg-input type="text"
-                      label="Apellidos"
-                      placeholder="Apellidos"
-                      v-model="user.apellidos">
-            </fg-input>
-          </div>
-        </div>
+        <md-card-content>
+          <div class="md-layout md-gutter">
+            <div class="md-layout-item md-small-size-100">
+              <md-field >
+                <label for="first-name">Nombres</label>
+                <md-input v-model="user.nombres" name="first-name" id="first-name" />
+                
+              </md-field>
+            </div>
 
-        <div class="row">
-          <div class="col-md-6">
-            <fg-input type="number"
-                      label="Telefono"
-                      placeholder="Numero Telefonico"
-                      v-model="user.telefono">
-            </fg-input>
-          </div>
-          <div class="col-md-6">
-            <fg-input type="text"
-                      label="Nombre de Usuario"
-                      placeholder="Usuario"
-                      v-model="user.usuario">
-            </fg-input>
-          </div>
-        </div>
-
-    
-
-        <div class="row">
-          <div class="col-md-6">
-            <fg-input type="email"
-                      label="Email"
-                      placeholder="Email"
-                      v-model="user.email">
-            </fg-input>
-          </div>
-          <div class="col-md-6">
-            <fg-input type="password"
-                      label="Clave"
-                      placeholder="Clave"
-                      v-model="user.password">
-            </fg-input>
-          </div>
-        
-        </div>
-
-       <!--  <div class="row">
-          <div class="col-md-12">
-            <div class="form-group">
-              <label>About Me</label>
-              <textarea rows="5" class="form-control border-input"
-                        placeholder="Here can be your description"
-                        v-model="user.aboutMe">
-
-              </textarea>
+            <div class="md-layout-item md-small-size-100">
+              <md-field >
+                <label for="last-name">Apellidos</label>
+                <md-input v-model="user.apellidos" name="last-name" id="last-name" />
+              
+              </md-field>
             </div>
           </div>
-        </div> -->
-        <div class="text-center">
-          <p-button type="info"
-                    round
-                    @click.native.prevent="updateProfile">
-            Registrarse
-          </p-button>
-        </div>
-        <div class="clearfix"></div>
-      </form>
-      <div class="col-md-3">
+
+      
+     <div class="md-layout md-gutter">
+           <div class="md-layout-item md-small-size-100">
+              <md-field >
+                <label for="dni">DNI</label>
+                <md-input v-model="user.dni" type="number" id="dni" name="dni"  />
+              </md-field>
+            </div>
+
+            <div class="md-layout-item md-small-size-100">
+            <md-field>
+            <label for="email">Email</label>
+            <md-input v-model="user.email" type="email" name="email" id="email"/>
+           
+          </md-field>
+            </div>
+          </div>
+   <div class="md-layout md-gutter">
+                
+                <div class="md-layout-item md-small-size-100">
+              <md-field>
+                        <label>Nombre de usuario</label>
+                        <md-input v-model="user.usuario" type="text" name="u" v-validate="'required'"></md-input>
+                    </md-field>
+                    <span class="text-danger align-middle">
+                        <i v-show="errors.has('u')" class="fa fa-close"></i>
+                        <span>{{ errors.first('u') }}</span>
+                    </span>
+                </div>
+
+                 <div class="md-layout-item md-small-size-100">
+                    <md-field>
+                        <label>Contraseña</label>
+                        <md-input v-model="user.password" type="password" name="password" v-validate="'required'"></md-input>
+                    </md-field>
+                    <span class="text-danger align-middle">
+                        <i v-show="errors.has('password')" class="fa fa-close"></i>
+                        <span>{{ errors.first('password') }}</span>
+                    </span>
+                 </div>
+
+
+   </div>
+
+             <div class="md-layout md-gutter">
+                <div class="md-layout-item md-small-size-100">
+              <md-field >
+                <label for="phone">Telefono</label>
+                <md-input v-model="user.telefono" type="number" id="phone" name="phone"   />
+              </md-field>
+            </div>
+            <div class="md-layout-item md-small-size-100">
+              <md-field >
+             <md-select v-if="countries.length > 0" v-model="user.pais_id">
+                  <md-option>Elegir</md-option>
+                  <md-option v-for="country in countries" :key="country.id" :value="country.id">{{country.nombre}}</md-option>
+                 
+                </md-select>
+                </md-field >
+            </div>
+
           
           </div>
-    </div>
-    
-  </card>
-   
+
+        <div class="md-layout md-gutter">
+            <div class="md-layout-item md-small-size-100">
+              <md-field >
+                <label for="city">Ciudad</label>
+                <md-input v-model="user.ciudad" name="city" id="city"   />
+                
+              </md-field>
+            </div>
+
+            <div class="md-layout-item md-small-size-100">
+              <md-field >
+                <label for="address">Dirección</label>
+                <md-input v-model="user.direccion" name="address" id="address" />
+              
+              </md-field>
+            </div>
+          </div>
+        </md-card-content>
+
+        
+
+        <md-card-actions>
+          <md-button type="submit" class="md-primary">Crear Cuenta</md-button>
+        </md-card-actions>
+      </md-card>
+
+
+    </form>
+  </div>
 </template>
 
 
@@ -101,9 +126,7 @@ body {
   background-color: #f4f3ef;
 }
 
-.container {
-  height: 500px !important;
-}
+
 </style>
   
 
@@ -111,7 +134,7 @@ body {
 import axios from "axios";
 
 import SignUpSuccess from "../notifications/SignUpSuccess";
-
+import countryService from '@/_services/Country.service';
 export default {
   data() {
     return {
@@ -127,15 +150,31 @@ export default {
         telefono: "",
         usuario: "",
         email: "",
-        password: ""
-      }
+        password: "",
+        dni:"",
+        ciudad:"",
+        direccion:""
+      },
+       countries: []
     };
+  },
+  created() {
+    this.getCountries();
   },
 
   methods: {
+      getCountries() {
+      countryService.getAll().then(response => {
+
+        this.countries = response.data.data;
+
+      },err => {
+        console.log(err);
+      })
+    },
    
-    updateProfile() {
-      
+    CreateAcount() {
+          
       axios
         .post(`http://127.0.0.1:90/api/v0/clientes/`, {
           pais_id: this.user.pais_id,
@@ -145,6 +184,9 @@ export default {
           usuario: this.user.usuario,
           email: this.user.email,
           password: this.user.password,
+          dni: this.user.dni,
+          ciudad:this.user.ciudad,
+          direccion: this.user.direccion,
           rol_id:3
         })
         .then(
