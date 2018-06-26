@@ -9,6 +9,7 @@ const fs   = require('fs'),
 //Asignacion de variables de ambiente
 const envConfig = dotenv.parse(fs.readFileSync('.env'))
 for (var k in envConfig) {
+	if (process.env.NODE_ENV && process.env.NODE_ENV == 'production' && k == 'NODE_ENV') { continue; }
 	process.env[k] = envConfig[k]
 }
 
@@ -81,6 +82,5 @@ const io = require('socket.io')(server),
 ws(io);
 
 require('cronjobs')
-
 
 module.exports = App;

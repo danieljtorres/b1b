@@ -46,8 +46,8 @@ class UsuarioController extends Controller {
         })
     }
 
-    referidos(req, res) {
-        UsuarioRepo.referidos(req, (err, datos) => {
+    referidosPorUsuario(req, res) {
+        UsuarioRepo.referidosPorUsuario(req, (err, datos) => {
             if (err) return res.status(500).json({data: null, err: err.message});
 
             if (!datos.length) return res.status(404).json({data: []});
@@ -59,6 +59,7 @@ class UsuarioController extends Controller {
     guardar(req, res) {
         UsuarioRepo.guardar(req, (err, datos) => {
             if (err) return res.status(err.status || 500).json({data: null, err: err.message});
+            
             return res.status(200).json({data: datos})
         })
     }

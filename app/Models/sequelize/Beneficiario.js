@@ -4,8 +4,7 @@ module.exports = (sequelize, DataTypes) => {
     //id: { type: DataTypes.INTEGER, primaryKey: true },
     nombres: DataTypes.STRING,
     relacion: DataTypes.STRING,
-    identificacion: DataTypes.STRING,
-    documento: DataTypes.STRING
+    identificacion: DataTypes.STRING
   }, {
     underscored: true,
     tableName: 'beneficiarios',

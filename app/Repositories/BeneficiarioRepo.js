@@ -6,34 +6,9 @@ const Sequelize = sq.Sequelize;
 const Op = sq.Sequelize.Op;
 
 const _he          = require('app/Helpers');
-const passwordHash = require('password-hash');
-const moment       = require('moment');
 
 class BeneficiarioRepo {
     
-    async obtener(req, cb) {
-
-        let params = req.params;
-
-        let beneficiario;
-
-        try {
-            beneficiario = await sq.Beneficiario.findById(params.id, {
-                include: [
-                    { model: sq.Cliente, as: '_cliente', include: [
-                            { model: sq.Usuario, as: '_usuario' }
-                        ]
-                    }
-                ] 
-            });
-        } catch (err) {
-            cb(err, null);
-            return null;
-        }
-
-        cb(null, beneficiario.toJSON());
-    }
-
     async todosPorUsuario(req, cb) {
 
         const auth = req.auth;
@@ -72,45 +47,62 @@ class BeneficiarioRepo {
         cb(null, beneficiarios);  
     }
 
+    async obtener(req, cb) {
+
+        let params = req.params;
+
+        let beneficiario;
+
+        try {
+            beneficiario = await sq.Beneficiario.findById(params.id, {
+                include: [
+                    { model: sq.Cliente, as: '_cliente', include: [
+                            { model: sq.Usuario, as: '_usuario' }
+                        ]
+                    }
+                ] 
+            });
+
+            if (beneficiario == null) {
+                cb(null, 'BENEFICIARIO_NO_ENCONTRADO');
+                return null;
+            } 
+        } catch (err) {
+            cb(err);
+            return null;
+        }
+
+        cb(null, beneficiario.toJSON());
+    }
+
     async guardar(req, cb) {
 
         const auth = req.auth;
         let body = req.body;
-            //files = req.files;
 
-        let transaction, cliente, beneficiario;
-
-        
-        /*if (!files.documento) {
-            cb(null, 'CAMPO_OBLIGATORIO');
-            return null; 
-        }
-
-        if (files.documento.type.indexOf('image') == -1) {
-            cb(null, 'FORMATO_INVALIDO');
-            return null;  
-        }
-
-        const nombreDocumento = _he.randomStr(16) + '.' + files.documento.type.split('/')[1];
-        const temporal        = files.documento.path;
-        const pathObjetivo    = '/resources/documentos/beneficiarios/';*/
-    
+        let transaction, cliente, nBeneficiarios, beneficiario;
 
         let beneficiarioDatos = {
             nombres: body.nombres,
             email: body.email,
             telefono: body.telefono,
             relacion: body.relacion,
-            identificacion: body.identificacion,
-            //documento: nombreDocumento
+            identificacion: body.identificacion
         }
 
         try {
-            //await _he.uploadFile(temporal, pathObjetivo, nombreDocumento)
-
             transaction = await sequelize.transaction();
 
             cliente = await sq.Cliente.findOne({ where: { usuario_id: auth.id } });
+
+            nBeneficiarios = await sq.Beneficiario.count({
+                where: { cliente_id: cliente.id }
+            });
+
+            if (nBeneficiarios == 3) {
+                cb(null, 'BENEFICIARIOS_LIMITE_ALCANZADO');
+                return null;
+            }
 
             beneficiarioDatos.cliente_id = cliente.id;
 
@@ -124,8 +116,6 @@ class BeneficiarioRepo {
 
             if (err.name == "SequelizeValidationError") err.status = 400;
 
-            //await _he.deleteFile(pathObjetivo + nombreDocumento);
-
             cb(err);
             return null;
         }
@@ -134,7 +124,60 @@ class BeneficiarioRepo {
     }
 
     async editar(req, cb) {
+        
+        const auth = req.auth;
+        let body = req.body,
+            params = req.params;
 
+        let transaction, usuario, beneficiario;
+
+        try {
+            usuario = await Usuario.findById( auth.id , { include: [{ model: Cliente, as: '_cliente' }] });
+
+            if (usuario == null) {
+                cb(null, 'USUARIO_NO_ENCONTRADO');
+                return null;
+            }
+
+            beneficiario = await Beneficiario.findOne({
+                where: { id: params.id , cliente_id: usuario._cliente.id }
+            }, { include: [{ model: Cliente, as: '_cliente' }] });
+
+            if (beneficiario == null) {
+                cb(null, 'BENEFICIARIO_NO_ENCONTRADO');
+                return null;
+            }
+        } catch (err) {
+            cb(err);
+            return null;
+        }
+        
+        let beneficiarioDatos = {
+            nombres: body.nombres || beneficiario.nombres,
+            email: body.email || beneficiario.email,
+            telefono: body.telefono || beneficiario.telefono,
+            relacion: body.relacion || beneficiario.relacion,
+            identificacion: body.identificacion || beneficiario.identificacion
+        }
+
+        try {
+            transaction = await sq.sequelize.transaction();
+
+            await beneficiario.update(beneficiarioDatos, { transaction });
+
+            await transaction.commit()
+
+            await beneficiario.reload();
+        } catch (err) {
+            await transaction.rollback();
+
+            if (err.name == "SequelizeValidationError") err.status = 400;
+
+            cb(err);
+            return null;
+        }
+
+        cb(null, beneficiario.toJSON());
     }
 }
 

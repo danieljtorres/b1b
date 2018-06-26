@@ -2,7 +2,7 @@ const CronJob = require('cron').CronJob,
     Controllers = require("app/Controllers");
 
 let RendimientoGuardar = new CronJob({
-    cronTime: '*/10 * * * * *',//'0 0 0 1,15 * *',
+    cronTime: '0 0 0 1 * *',
     onTick: () => {
         Controllers.RendimientoController.generar();
     },

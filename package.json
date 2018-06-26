@@ -25,7 +25,8 @@
   },
   "devDependencies": {},
   "scripts": {
-    "dev": "nodemon app.js"
+    "dev": "nodemon app.js",
+    "prod": "set NODE_ENV=production&&nodemon app.js"
   },
   "repository": {
     "type": "git",

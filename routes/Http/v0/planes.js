@@ -4,6 +4,8 @@ const Router    = require("express").Router(),
     Controllers = require("app/Controllers"),
     Middlewares = require("app/Middlewares");
 
+const auth = Middlewares.AuthorizationMiddleware.auth;
+
 /**
  * MIDDLEWARES GLOBALES
  */
@@ -19,7 +21,7 @@ Router.get('/asociaciones', Controllers.PlanController.asociaciones);
 /**
  * POST
  */
-Router.post('/',  Middlewares.AuthorizationMiddleware.auth([1,2]), Controllers.PlanController.guardar);
+Router.post('/',  auth([1,2]), Controllers.PlanController.guardar);
 
 /**
  * PUT
@@ -29,6 +31,6 @@ Router.post('/',  Middlewares.AuthorizationMiddleware.auth([1,2]), Controllers.P
 /**
  * DELETE
  */
-Router.delete('/:id', Middlewares.AuthorizationMiddleware.auth([1,2]), Controllers.PlanController.borrar);
+Router.delete('/:id', auth([1,2]), Controllers.PlanController.borrar);
 
 module.exports = Router;

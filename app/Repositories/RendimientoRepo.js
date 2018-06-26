@@ -9,9 +9,9 @@ const emailService = require('app/Services/EmailService');
 
 const _he    = require('app/Helpers');
 const moment = require('moment')
-const async  = require('async');
 
 class RendimientoRepo {
+
     async generar(cb) {
         
         let transaction, inversiones;
@@ -44,20 +44,12 @@ class RendimientoRepo {
     
                     //Guardo el primer rendimiento 1
                     montoMensual = (inversion.monto * (plan.porcentaje / 100) ) / plan.tiempo;
-
-                    console.log({montoMensual: montoMensual});
                     
-                    montoDiario = parseFloat(montoMensual) / 30;
-
-                    console.log({montoDiario: montoDiario});
+                    montoDiario = parseFloat(montoMensual) / 30
     
                     fechaAprobado = moment(inversion.aprobado, 'YYYY/MM/DD');
-
-                    console.log({fechaAprobado: fechaAprobado});
                     
                     monto = parseFloat(montoDiario) * ( 30 - parseInt( fechaAprobado.format('D') ) )
-
-                    console.log({monto: monto});
 
                     try {
                         await sq.Rendimiento.create({
@@ -139,7 +131,6 @@ class RendimientoRepo {
                         });
     
                         if (inversion.capitalizar == 2) {
-                            console.log('capitalizado')
                             estado = 4;
     
                             planNuevo = await sq.Plan.findOne({
