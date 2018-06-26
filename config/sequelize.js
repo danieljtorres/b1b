@@ -3,7 +3,7 @@ module.exports = {
         username: 'root',
         password: ')V6ry[*bzeGA*L,b',
         database: 'b1b',
-        host: '127.0.0.1',
+        host: '144.202.44.43',
         dialect: 'mysql'
     },
     development: {

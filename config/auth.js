@@ -1,7 +1,7 @@
 module.exports = {
     production: {
         enabled: true,
-        secretKey: 'production',
+        secretKey: 'production8080',
         exp: {
             unit: "days",
             qty: 7
