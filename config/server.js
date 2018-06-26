@@ -1,6 +1,6 @@
 module.exports = {
     production: {
-        port: '90',
+        port: '4001',
         ip: '127.0.0.1'
     },
     development: {

@@ -6,10 +6,12 @@ global.__basePath = path.resolve(__dirname);
 const fs   = require('fs'),
 	dotenv = require('dotenv');
 
-//Asignacion de variables de ambiente
-const envConfig = dotenv.parse(fs.readFileSync('.env'))
-for (var k in envConfig) {
-	process.env[k] = envConfig[k]
+if (process.env.NODE_ENV == 'development') {
+	//Asignacion de variables de ambiente
+	const envConfig = dotenv.parse(fs.readFileSync('.env'))
+	for (var k in envConfig) {
+		process.env[k] = envConfig[k]
+	}	
 }
 
 const express           = require('express'),
@@ -84,3 +86,17 @@ require('cronjobs')
 
 
 module.exports = App;
+
+
+/*server {
+    listen 80;
+    server_name localhost;
+    location / {
+        proxy_pass http://144.202.44.43:4001;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+     }
+}*/
