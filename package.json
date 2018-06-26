@@ -1,0 +1,40 @@
+{
+  "name": "b1b",
+  "version": "1.0.0",
+  "description": "app b1b",
+  "main": "app.js",
+  "dependencies": {
+    "app-module-path": "^2.2.0",
+    "async": "^2.6.1",
+    "compression": "^1.7.2",
+    "connect-multiparty": "^2.1.0",
+    "cookie-parser": "^1.4.3",
+    "cors": "^2.8.4",
+    "cron": "^1.3.0",
+    "dotenv": "^5.0.1",
+    "express": "^4.16.3",
+    "helmet": "^3.12.0",
+    "jsonwebtoken": "^8.2.1",
+    "mmdb-reader": "^1.1.0",
+    "moment": "^2.22.1",
+    "mysql2": "^1.5.3",
+    "nodemailer": "^4.6.4",
+    "password-hash": "^1.2.2",
+    "sequelize": "^4.37.6",
+    "socket.io": "^2.1.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "dev": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BazamIdeas/iupets-server.git"
+  },
+  "author": "Bazam",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BazamIdeas/iupets-server/issues"
+  },
+  "homepage": "https://github.com/BazamIdeas/iupets-server#readme"
+}

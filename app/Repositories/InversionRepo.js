@@ -1,0 +1,158 @@
+'use strict';
+
+const sq = require('app/Models/sequelize');
+const sequelize = sq.sequelize
+const Sequelize = sq.Sequelize;
+const Op = sq.Sequelize.Op;
+
+const emailService = require('app/Services/EmailService');
+
+const _he = require('app/Helpers');
+
+class InversionRepo {
+
+    async todos(cb) {
+
+        let inversiones;
+
+        try {
+            inversiones = await sq.Inversion.findAll();
+        } catch (error) {
+            cb(error);
+            return null;
+        }
+
+        cb(null, inversiones);
+    }
+
+    async guardar(req, cb) {
+
+        const auth = req.auth;
+        let body = req.body,
+            files = req.files;
+
+        let transaction, inversion, usuario;
+
+        if (!files.voucher) {
+            cb(null, 'ARCHIVO_OBLIGATORIO');
+            return null; 
+        }
+
+        if (files.voucher.type.indexOf('image') == -1) {
+            cb(null, 'FORMATO_INVALIDO');
+            return null;  
+        }
+
+        const nombreVoucher = _he.randomStr(16) + '.' + files.voucher.type.split('/')[1];
+        const temporal      = files.voucher.path;
+        const pathObjetivo  = '/resources/vouchers/';
+
+        let codigo = await generarCodigo(auth.id);
+
+        if ( codigo == false ) {
+            cb(null, 'DEFAULT');
+            return null;  
+        }
+
+        let inversionDatos = {
+            usuario_id: auth.id,
+            plan_id: body.plan_id,
+            estado_id: 1,
+            monto: body.monto,
+            voucher: nombreVoucher,
+            codigo: codigo
+        }
+
+        try {
+            transaction = await sequelize.transaction();
+
+            await _he.uploadFile(temporal, pathObjetivo, nombreVoucher)
+
+            inversion = await sq.Inversion.create(inversionDatos, { silent: true, transaction });
+
+            // Enviar email de inversion realizada a usuario
+            usuario = await sq.Usuario.findById( auth.id );
+
+            emailService.setMssg({
+                to: usuario.email,
+                subject: 'B1B | Inversion Realizada!',
+            }).setData({
+                usuario: usuario.usuario
+            }).setHtml('inversion-detalle');
+            
+            await emailService.send();
+
+            await transaction.commit()
+
+            await inversion.reload();
+        } catch (err) {
+            await transaction.rollback();
+
+            if (err.name == "SequelizeValidationError") err.status = 400;
+
+            await _he.deleteFile(pathObjetivo + nombreVoucher);
+
+            cb(err);
+            return null;
+        }
+
+        cb(null, inversion.toJSON());
+    }
+
+    async aprobar(req, cb) {
+
+        let params = req.params;
+        
+        let transaction, inversion;
+
+        try {
+            inversion = await sq.Inversion.findOne({ 
+                where: { id: params.id },
+                include: { model: sq.Usuario, as: '_usuario'}
+            })
+
+            if (inversion == null) {
+                cb(null, 'INVERSION_NO_ENCONTRADA');
+                return null;
+            }
+
+            transaction = await sequelize.transaction();
+
+            await inversion.update({
+                aprobado: moment().format("YYYY-MM-DD HH:mm:ss"),
+                estado_id: 2
+            }, { silent: true , transaction });
+
+            // Enviar email de inversion aprobada a usuario
+            emailService.setMssg({
+                to: inversion._usuario.email,
+                subject: 'B1B | Asociacion Aprobada!',
+            }).setData({
+                usuario: inversion._usuario.usuario
+            }).setHtml('inversion-aprobada');
+            
+            await emailService.send();
+
+            await transaction.commit();
+        } catch (err) {
+            await transaction.rollback();
+
+            cb(err);
+            return null;
+        }
+
+        cb(null, inversion.toJSON());
+    }
+}
+
+const generarCodigo = async (id) => {
+    let codigo = _he.randomStr(10) + '_' + id, query;
+    try {
+        query = await sq.Inversion.findAndCountAll({ where: { codigo: codigo } });
+        console.log(query);
+        if (query.count) generarCodigo(id);
+        return codigo;
+    } catch (error) { return false; }
+}
+
+module.exports = new InversionRepo;

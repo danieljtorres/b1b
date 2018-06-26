@@ -1,0 +1,3 @@
+-- Variables y Nombres de funciones en camelCase
+-- Funciones arrows () => {}
+-- Nombres de Controladores en UpperCase -> NombreController.js

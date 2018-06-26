@@ -1,0 +1,446 @@
+'use strict';
+
+const sq        = require('app/Models/sequelize');
+const sequelize = sq.sequelize
+const Sequelize = sq.Sequelize;
+const Op = sq.Sequelize.Op;
+
+const Usuario    = sq.Usuario;
+const Rol        = sq.Rol;
+const Cliente    = sq.Cliente;
+const Asociacion = sq.Asociacion;
+
+const jwtService   = require('app/Services/JwtService');
+const emailService = require('app/Services/EmailService');
+
+const _he          = require('app/Helpers');
+const passwordHash = require('password-hash');
+const fs           = require('fs');
+
+class UsuarioRepo {
+
+    async login(req, cb) {
+
+        let body  = req.body;
+
+        let loginDatos = {
+            usuario: body.usuario,
+            password: body.password
+        }
+
+        let usuario, token;
+
+        try {
+            usuario = await Usuario.findOne({ 
+                where: {usuario: loginDatos.usuario}, 
+                attributes: ['id', 'usuario', 'password', 'avatar', 'activo', 'rol_id'] 
+            });
+
+            if (usuario == null) {
+                cb(null, 'LOGIN_INCORRECTO');
+                return null;
+            }
+
+            if (!usuario.activo) {
+                cb(null, 'USUARIO_NO_ACTIVO');
+                return null;  
+            }
+
+            if ( !passwordHash.verify(loginDatos.password, usuario.password) ) {
+                cb(null, 'LOGIN_INCORRECTO');
+                return null;
+            }
+
+            token = jwtService.crearToken({
+                id: usuario.id, 
+                rol: usuario.rol_id,
+                avatar: usuario.avatar,
+            }, usuario.rol_id);
+        } catch (err) {
+            cb(err);
+            return null;
+        }
+
+        cb(null, {token: token});
+    }
+
+    async datos(req, cb) {
+
+        let auth = req.auth,
+            usuario;
+
+        try {
+            usuario = await Usuario.findOne({
+                where: { id: auth.id },
+                include: [{model: Cliente, as: '_cliente'}]
+            })
+        } catch (err) {
+            cb(err);
+            return null;
+        }
+
+        cb(null, usuario);
+    }
+
+    async todos(cb) {
+
+        let usuarios;
+
+        try {
+            usuarios = await Usuario.findAll({ include: [
+                    { model: Cliente, as: '_cliente' },
+                    { model: Rol, as: '_rol' }
+                ] 
+            });
+        } catch (error) {
+            cb(error);
+            return null;
+        }
+
+        cb(null, usuarios);
+    }
+
+    async admins(cb) {
+        
+        let usuarios;
+
+        try {
+            usuarios = await Usuario.findAll({ 
+                where: { rol_id: 2 },
+                include: [{ model: Cliente, as: '_cliente' }] 
+            });
+        } catch (error) {
+            cb(error);
+            return null;
+        }
+
+        cb(null, usuarios);
+    }
+
+    async clientes(cb) {
+        
+        let usuarios;
+
+        try {
+            usuarios = await Usuario.findAll({ 
+                where: { rol_id: 3 },
+                include: [{ model: Cliente, as: '_cliente' }] 
+            });
+        } catch (error) {
+            cb(error);
+            return null;
+        }
+
+        cb(null, usuarios);
+    }
+
+    async asociados(cb) {
+                
+        let usuarios;
+
+        try {
+            usuarios = await Usuario.findAll({ 
+                where: { rol_id: 3 },
+                include: [
+                    { model: Asociacion, as: '_asociacion', where: { usuario_id: Sequelize.col('Usuario.id') } },
+                    { model: Cliente, as: '_cliente' }
+                ] 
+            });
+        } catch (error) {
+            cb(error);
+            return null;
+        }
+
+        cb(null, usuarios);
+    }
+
+    async referidosPorUsuario(req, cb) {
+
+        const auth = req.auth;
+
+        let params = req.params,
+            id;
+            
+        let usuario, usuarios;
+
+        if (params.id && auth.rol == 3) {
+            cb(null, 'PERMISOS_INVALIDOS');
+            return null;
+        } else if (!params.id && auth.rol != 3) {
+            cb(null, 'PARAMETROS_NO_ESPECIFICADOS');
+            return null;
+        }  else if (!params.id && auth.rol == 3) {
+            id = auth.id;
+        } else if (params.id && auth.rol != 3) {
+            id = params.id;
+        }
+
+        try {
+            usuario = await Usuario.findOne({ 
+                where: { id: id },
+                include: [{model: Asociacion, as: '_asociacion'}]
+            });
+
+            if (usuario == null) {
+                cb(null, 'USUARIO_NO_ENCONTRADO');
+                return null;
+            }
+
+            if (!usuario._asociacion || usuario._asociacion == null) {
+                cb(null, 'ASOCIACION_NO_ENCONTRADA');
+                return null;
+            }
+
+            usuarios = await Usuario.findAll({ 
+                where: { referencia: id },
+                include: [{ model: Cliente, as: '_cliente' }]
+            });
+
+            //añadir numero de inversiones, total invertido
+        } catch (err) {
+            cb(err);
+            return null;
+        }
+
+        cb(null, usuarios);
+    }
+
+    async guardar(req, cb) {
+
+        let body  = req.body;
+
+        let transaction, usuario;
+
+        let usuarioDatos = {
+            rol_id: 2,
+            usuario: body.usuario,
+            email: body.email,
+            password: body.password,
+            codigo: _he.randomStr(16),
+            activo: 1,
+            avatar: fs.readFileSync(__basePath + '/resources/avatares/default.txt')
+        }
+
+        try {
+            transaction = await sq.sequelize.transaction();
+
+            usuario = await Usuario.create(usuarioDatos, { 
+                include: [{ model: Cliente, as: '_cliente' }], 
+                silent: true, 
+                transaction
+            });
+
+            await transaction.commit()
+
+            await usuario.reload();
+        } catch (err) {
+            await transaction.rollback();
+
+            if (err.name == "SequelizeValidationError") err.status = 400;
+
+            cb(err);
+            return null;
+        }
+
+        cb(null, usuario.toJSON());
+    }
+
+    async activar(req, cb) {
+
+        let params = req.params;
+
+        let transaction, usuario;
+
+        try {
+            transaction = await sq.sequelize.transaction();
+
+            usuario = await Usuario.findOne({ 
+                where: { codigo: params.codigo },
+                transaction
+            })
+
+            if (usuario == null) {
+                cb(null, 'USUARIO_NO_ENCONTRADO');
+                await transaction.rollback();
+                return null;
+            }
+
+            await usuario.update({
+                codigo: null,
+                activo: 1
+            }, { silent: true, transaction });
+
+            await transaction.commit();
+        } catch (err) {
+            await transaction.rollback();
+
+            cb(err);
+            return null;
+        }
+
+        cb(null, usuario.toJSON());
+    }
+
+    async editar(req, cb) {
+
+        const auth = req.auth;
+        let body = req.body,
+            params = req.params;
+
+        let transaction, usuario, id;
+        
+        if (params.id && [1,2].indexOf(auth.rol) != -1) {
+            id = params.id;
+        } else {
+            id = auth.id;
+        }
+
+        try {
+            usuario = await Usuario.findById( id , { include: [{ model: Cliente, as: '_cliente' }] });
+
+            if (usuario == null) {
+                cb(null, 'USUARIO_NO_ENCONTRADO');
+                return null;
+            }
+
+            if (params.id && usuario.rol_id == 1 || params.id && usuario.rol_id == 2 && auth.rol == 2) {
+                cb(null, 'PERMISOS_INVALIDOS');
+                return null;
+            }
+        } catch (err) {
+            cb(err);
+            return null;
+        }
+        
+        let usuarioDatos = {
+            usuario: body.usuario || usuario.usuario,
+            email: body.email || usuario.email
+        }
+
+        try {
+            transaction = await sq.sequelize.transaction();
+
+            await usuario.update(usuarioDatos, { transaction });
+        } catch (err) {
+            await transaction.rollback();
+
+            if (err.name == "SequelizeValidationError") err.status = 400;
+
+            cb(err);
+            return null;
+        }
+
+        if (usuario._cliente) {
+            let clienteDatos = {
+                nombres: body.nombres || usuario._cliente.nombres,
+                apellidos: body.apellidos || usuario._cliente.apellidos,
+                telefono: body.telefono || usuario._cliente.telefono,
+                pais_id: body.pais_id || usuario._cliente.pais_id
+            }
+
+            try {
+                await usuario._cliente.update(clienteDatos, { transaction });
+
+                await transaction.commit()
+
+                await usuario.reload();
+            } catch (err) {
+                await transaction.rollback();
+
+                if (err.name == "SequelizeValidationError") err.status = 400;
+    
+                cb(err);
+                return null;
+            }
+        }else{
+            await transaction.commit()
+
+            await usuario.reload();
+        }
+
+        cb(null, usuario.toJSON());
+    }
+
+    async cambiarAvatar(req, cb) {
+
+        const auth = req.auth;
+        const avatar = req.files.avatar;
+
+        if (avatar.type.indexOf('image') == -1) {
+            cb(null, 'FORMATO_INVALIDO');
+            return null;  
+        }
+
+        const nombreAvatar = _he.randomStr(16) + '_' + auth.id + '.' + avatar.type.split('/')[1];
+        const temporal     = avatar.path;
+        const pathObjetivo = '/resources/avatares/' ;
+
+        let transaction, usuario;
+
+        try {
+            transaction = await sequelize.transaction();
+
+            usuario = await Usuario.findById( auth.id, transaction)
+
+            if (usuario == null) {
+                cb(null, 'USUARIO_NO_ENCONTRADO');
+                return null;
+            }
+
+            await _he.uploadFile(temporal, pathObjetivo, nombreAvatar)
+
+            await usuario.update({avatar: nombre}, transaction);
+
+            await transaction.commit()
+
+            await _he.deleteFile(pathObjetivo + usuario.avatar);
+        } catch (err) {
+            await transaction.rollback();
+
+            if (err.name == "SequelizeValidationError") err.status = 400;
+
+            await _he.deleteFile(pathObjetivo + nombreAvatar);
+
+            cb(err);
+            return null;
+        }
+
+        cb(null, usuario.toJSON());
+    }
+
+    async borrar(req, cb) {
+        
+        let params = req.params;
+        
+        let transaction, usuario;
+
+        try {
+            transaction = await sq.sequelize.transaction();
+
+            usuario = await Usuario.findById( params.id , {
+                include:  [{ model: Cliente, as: '_cliente' }],
+                transaction
+            })
+
+            if (usuario == null) {
+                cb(null, 'USUARIO_NO_ENCONTRADO');
+                await transaction.rollback();
+                return null;
+            }
+
+            await usuario.destroy({ silent: true, transaction});
+
+            await transaction.commit();
+        } catch (err) {
+            await transaction.rollback();
+
+            cb(err);
+            return null;
+        }
+
+        cb(null, {borrado: true})
+    }
+
+}
+
+module.exports = new UsuarioRepo;
