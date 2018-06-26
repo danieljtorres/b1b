@@ -40,6 +40,7 @@ class PlanController extends Controller {
     guardar(req, res) {
         PlanRepo.guardar(req, (err, datos) => {
             if (err) return res.status(err.status || 500).json({data: null, err: err});
+            
             return res.status(200).json({data: datos})
         })
     }

@@ -14,21 +14,21 @@ const auth = Middlewares.AuthorizationMiddleware.auth;
 /**
  * GET
  */
-Router.get('/', auth([1,2]), Controllers.AsociacionController.solicitudes);
+//Router.get('/', Controllers.BeneficiarioController);
 
 /**
  * POST
  */
-Router.post('/', auth([3]), Controllers.AsociacionController.guardar);
+Router.post('/', auth([3]), Controllers.BeneficiarioController.guardar);
 
 /**
  * PUT
  */
-Router.put('/:id', auth([1,2]), Controllers.AsociacionController.aprobar);
+Router.put('/:id', auth([3]), Controllers.BeneficiarioController.editar);
 
 /**
  * DELETE
  */
-//Router.delete('/:id', auth([1,2]), Controllers.AsociacionController.borrar);
+//Router.delete('/:id', auth([1,2]), Controllers.BeneficiarioController.borrar);
 
 module.exports = Router;

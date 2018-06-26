@@ -165,7 +165,7 @@ class ClienteRepo {
 
         const nombreDocumento = _he.randomStr(16) + '_' + auth.id + '.' + documento.type.split('/')[1];
         const temporal        = documento.path;
-        const pathObjetivo    = '/resources/documentos/clientes/' ;
+        const pathObjetivo    = '/resources/documentos/' ;
 
         try {
             transaction = await sequelize.transaction();

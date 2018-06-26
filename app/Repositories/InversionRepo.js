@@ -11,12 +11,66 @@ const _he = require('app/Helpers');
 
 class InversionRepo {
 
-    async todos(cb) {
+    async solicitudes(cb) {
 
         let inversiones;
 
         try {
-            inversiones = await sq.Inversion.findAll();
+            inversiones = await sq.Inversion.findAll({
+                where: { estado_id: 1 },
+                include: [
+                    { model: sq.Plan, as: '_plan' },
+                    { model: sq.Estado, as: '_estado' }
+                ] 
+            });
+        } catch (error) {
+            cb(error);
+            return null;
+        }
+
+        cb(null, inversiones);
+    }
+
+    async todosPorUsuario(req, cb) {
+
+        const auth = req.auth;
+        let params = req.params;
+
+        let usuario, inversiones, id, includeEstado;
+        
+        if (params.id && [1,2].indexOf(auth.rol) != -1) {
+            id = params.id;
+        } else {
+            id = auth.id;
+        }
+
+        if (params.estado) {
+           includeEstado = { model: sq.Estado, as: '_estado', where: { nombre: params.estado.toUpperCase() } };
+        } else {
+            includeEstado = { model: sq.Estado, as: '_estado', where: { nombre: 'ACTIVO' } };
+        }
+
+        try {
+            usuario = await sq.Usuario.findOne({ where: { id: id } });
+ 
+            if (usuario == null) {
+                cb(null, 'USUARIO_NO_ENCONTRADO');
+                return null;
+            }
+
+            inversiones = await sq.Inversion.findAll({ 
+                where: { usuario_id: usuario.id },
+                include: [
+                    { model: sq.Plan, as: '_plan' },
+                    includeEstado
+                ] 
+            });
+
+            await _he.asyncForEach(inversiones, async (inversion, key) => {
+                let porCobrar = await sq.Rendimiento.sum('monto', { where: { pagado: null, inversion_id: inversion.id } });
+                inversiones[key] = inversiones[key].toJSON();
+                inversiones[key]._por_cobrar = porCobrar || 0;
+            });
         } catch (error) {
             cb(error);
             return null;
@@ -142,6 +196,85 @@ class InversionRepo {
         }
 
         cb(null, inversion.toJSON());
+    }
+
+    async cobrar(req, cb) {
+
+        const auth = req.auth;
+        let body = req.body,
+            params = req.params;
+        
+        let transaction, inversion, rendimientos, whereRendimiento, montoFactura = 0, factura;
+
+        let codigo = await generarCodigo(auth.id);
+
+        if ( codigo == false ) {
+            cb(null, 'DEFAULT');
+            return null;  
+        }
+
+        let facturaDatos = {
+            codigo: codigo
+        }
+
+        try {
+            inversion = await sq.Inversion.findOne({
+                where: { id: params.id, usuario_id: auth.id, estado_id: 2 }
+            })
+
+            if (inversion == null) {
+                cb(null, 'INVERSION_NO_ENCONTRADO');
+                return null;
+            }
+
+            facturaDatos.inversion_id = inversion.id
+
+            whereRendimiento = {
+                codigo_factura: null,
+                inversion_id: inversion.id
+            };
+
+            if (body.correlativo) {
+                whereRendimiento.correlativo = { [Op.lte]: body.correlativo }
+            }
+
+            rendimientos = await sq.Rendimiento.findAll({
+                where: whereRendimiento
+            });
+
+            if (!rendimientos.length) {
+                cb(null, null);
+                return null;
+            }
+
+            transaction = await sequelize.transaction();
+
+            await _he.asyncForEach(rendimientos, async (rendimiento, key) => {
+                montoFactura += montoFactura + rendimiento.monto;
+
+                try {
+                    await rendimiento.update({ codigo_factura: codigo },{ transaction });
+                } catch (error) {
+                    throw error;
+                }
+            });
+
+            facturaDatos.monto = montoFactura;
+
+            factura = await sq.Pago.create(facturaDatos, { silent: true, transaction });
+
+            await transaction.commit();
+
+            await factura.reload();
+        } catch (error) {
+            console.log(error)
+            await transaction.rollback();
+
+            cb(err);
+            return null;
+        }
+
+        cb(null, factura.toJSON());
     }
 }
 

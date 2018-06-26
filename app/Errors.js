@@ -5,6 +5,10 @@ const Errors = {
 
    'PLAN_NO_ENCONTRADO': { status: 404, msg: 'Plan no encontrado en la base de datos' },
 
+   'BENEFICIARIO_NO_ENCONTRADO': { status: 404, msg: 'Beneficiario no encontrado en la base de datos' },
+
+   'BENEFICIARIOS_LIMITE_ALCANZADO': { status: 409, msg: 'Conflicto, limite de beneficiarios' },
+
    'ASOCIACION_NO_ENCONTRADA': { status: 404, msg: 'Asociacion no encontrada en la base de datos' },
 
    'SOLICITUD_ASOCIACION_REALIZADA': { status: 409, msg: 'Conflicto, solicitud de asociacion ya realizada' },

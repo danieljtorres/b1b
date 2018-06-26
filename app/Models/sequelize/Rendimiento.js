@@ -11,13 +11,11 @@ module.exports = (sequelize, DataTypes) => {
 			type: DataTypes.STRING,
 			allowNull: false
 		},
-		codigo_pago: DataTypes.STRING,
+		codigo_factura: DataTypes.STRING,
 		correlativo: {
 			type: DataTypes.INTEGER,
 			allowNull: false
 		},
-		solicitado: DataTypes.INTEGER,
-		liberado: DataTypes.INTEGER,
 		pagado: DataTypes.DATE
 	}, {
 		underscored: true,
@@ -27,10 +25,6 @@ module.exports = (sequelize, DataTypes) => {
 		updatedAt: false,//'actualizado',
 		//deletedAt: 'borrado',
 
-		indexes: [{
-			unique: true,
-			fields: ['codigo']
-		}]
 	});
 	Rendimiento.associate = function (models) {
 		Rendimiento.belongsTo(models.Inversion, { foreignKey: 'inversion_id', as: '_inversion' });

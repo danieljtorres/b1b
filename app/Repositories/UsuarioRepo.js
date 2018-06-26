@@ -74,6 +74,11 @@ class UsuarioRepo {
                 where: { id: auth.id },
                 include: [{model: Cliente, as: '_cliente'}]
             })
+
+            if (usuario == null) {
+                cb(null, 'USUARIO_NO_ENCONTRADO');
+                return null;
+            } 
         } catch (err) {
             cb(err);
             return null;

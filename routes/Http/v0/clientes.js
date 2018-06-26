@@ -4,6 +4,8 @@ const Router    = require("express").Router(),
     Controllers = require("app/Controllers"),
     Middlewares = require("app/Middlewares");
 
+const auth = Middlewares.AuthorizationMiddleware.auth;
+
 /**
  * MIDDLEWARES GLOBALES
  */

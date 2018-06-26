@@ -4,6 +4,7 @@ module.exports = (sequelize, DataTypes) => {
 		//id: { type: DataTypes.INTEGER, primaryKey: true },
 		nombre: DataTypes.STRING
 	}, {
+		timestamps: false,
 		underscored: true,
 		tableName: 'estados',
 
