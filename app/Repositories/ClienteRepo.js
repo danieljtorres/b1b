@@ -60,7 +60,7 @@ class ClienteRepo {
                 asociacion = await sq.Asociacion.findOne({
                     where: { 
                         usuario_id: usuarioReferencia.id, 
-                        aprobacion: { [Op.ne]: null }
+                        aprobado: { [Op.ne]: null }
                     }
                 })
 

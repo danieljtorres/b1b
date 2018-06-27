@@ -141,7 +141,7 @@ class UsuarioRepo {
 
             await _he.asyncForEach(usuarios, async (usuario, key) => {
 
-                usuario[key] = usuario[key].toJSON();
+                usuarios[key] = usuarios[key].toJSON();
 
                 let id = usuario[key].id;
 
