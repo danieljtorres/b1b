@@ -143,16 +143,16 @@ class UsuarioRepo {
 
                 usuarios[key] = usuarios[key].toJSON();
 
-                let id = usuario[key].id;
+                let id = usuarios[key].id;
 
                 nReferidos = await sq.Usuario.count({ where: { referencia : id } });
-                usuario[key]._n_referidos = nReferidos;
+                usuarios[key]._n_referidos = nReferidos;
 
                 nInversiones.total = await sq.Inversion.count({ where: { usuario_id : id, estado_id: { [Op.ne]: 4 } } });
                 nInversiones.solicitudes = await sq.Inversion.count({ where: { usuario_id : id, estado_id: 1 } });
                 nInversiones.activas = await sq.Inversion.count({ where: { usuario_id : id, estado_id: 2 } });
                 nInversiones.finalizadas = await sq.Inversion.count({ where: { usuario_id : id, estado_id: 3 } });
-                usuario[key]._n_inversiones = nInversiones;
+                usuarios[key]._n_inversiones = nInversiones;
             });
 
         } catch (error) {
