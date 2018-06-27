@@ -5,7 +5,7 @@ module.exports = {
         database: 'b1b',
         host: '144.202.44.43',
         dialect: 'mysql',
-        logging: false,
+        //logging: false,
     },
     development: {
         username: process.env.MYSQL_USER || 'root',
@@ -13,6 +13,6 @@ module.exports = {
         database: process.env.MYSQL_DATABASE || 'b1b_dev',
         host: process.env.MYSQL_HOST || '127.0.0.1',
         dialect: 'mysql',
-        logging: process.env.MYSQL_LOG || false,
+        //logging: process.env.MYSQL_LOG || false,
     }
 }[process.env.NODE_ENV]

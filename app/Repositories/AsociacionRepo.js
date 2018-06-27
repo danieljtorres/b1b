@@ -6,6 +6,7 @@ const Sequelize = sq.Sequelize;
 const Op = sq.Sequelize.Op;
 
 const emailService = require('app/Services/EmailService');
+const eventoService = require('app/Services/EventoService');
 
 const _he    = require('app/Helpers');
 const moment = require('moment');
@@ -137,6 +138,14 @@ class AsociacionRepo {
             }, { silent: true , transaction });
 
             await asociacion._usuario.update({referencia: null}, {silent:true, transaction});
+
+            // Registro de actividad de administrador
+            eventoService.setUser(req.auth.id).addToBody({
+                accion: 'MODIFICAR',
+                descripcion: '${inicio} aceptado la solicitud de asociacion ${final}',
+                tablas: [{asociaciones: asociacion.id}]
+            }).addToTables('asociaciones');
+            await eventoService.save(transaction);
 
             // Enviar email de solicitud aprobada a usuario
             emailService.setMssg({

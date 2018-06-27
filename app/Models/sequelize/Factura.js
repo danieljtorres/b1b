@@ -1,6 +1,6 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
-	var Pago = sequelize.define('Pago', {
+	var Factura = sequelize.define('Factura', {
 		//id: { type: DataTypes.INTEGER, primaryKey: true },
 		inversion_id: DataTypes.INTEGER,
 		monto: {
@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
 	}, {
 		underscored: true,
 		//paranoid: true,
-		tableName: 'pagos',
+		tableName: 'facturas',
 		createdAt: 'creado',
 		updatedAt: false,//'actualizado',
 		//deletedAt: 'borrado',
@@ -26,9 +26,9 @@ module.exports = (sequelize, DataTypes) => {
 			fields: ['codigo']
 		}]
 	});
-	Pago.associate = function (models) {
-		Pago.belongsTo(models.Inversion, { foreignKey: 'inversion_id', as: '_inversion' });
-		Pago.hasMany(models.Rendimiento, { foreignKey: 'codigo_factura', targetKey: 'codigo', as: '_rendimientos' });
+	Factura.associate = function (models) {
+		Factura.belongsTo(models.Inversion, { foreignKey: 'inversion_id', as: '_inversion' });
+		Factura.hasMany(models.Rendimiento, { foreignKey: 'codigo_factura', targetKey: 'codigo', as: '_rendimientos' });
 	};
-	return Pago;
+	return Factura;
 };

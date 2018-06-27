@@ -5,7 +5,7 @@ const sequelize = sq.sequelize
 const Sequelize = sq.Sequelize;
 const Op = sq.Sequelize.Op;
 
-//const Services = require('app/Services');
+const eventoService = require('app/Services/EventoService');
 
 const _he = require('app/Helpers');
 
@@ -64,7 +64,7 @@ class PlanRepo {
         let transaction, plan;
 
         let planDatos = {
-            titulo: body.titulo,
+            titulo: body.titulo.toUpperCase(),
             tipo: body.tipo,
             descripcion: body.descripcion,
             caracteristicas: body.caracteristicas,
@@ -79,6 +79,14 @@ class PlanRepo {
             transaction = await sequelize.transaction();
 
             plan = await sq.Plan.create(planDatos, { silent: true, transaction });
+
+            // Registro de actividad de administrador
+            eventoService.setUser(req.auth.id).addToBody({
+                accion: 'GUARDAR',
+                descripcion: '${inicio} guardado un nuevo plan ('+plan.titulo.toUpperCase()+')',
+                tablas: [{planes: plan.id}]
+            }).addToTables('planes');
+            await eventoService.save(transaction);
 
             await transaction.commit()
 
@@ -112,7 +120,17 @@ class PlanRepo {
                 return null;
             }
 
+            let titulo = plan.titulo;
+
             await plan.destroy({ silent: true, transaction});
+
+            // Registro de actividad de administrador
+            eventoService.setUser(req.auth.id).addToBody({
+                accion: 'BORRAR',
+                descripcion: '${inicio} borrado plan ('+titulo.toUpperCase()+')',
+                tablas: [{planes: plan.id}]
+            }).addToTables('planes');
+            await eventoService.save(transaction);
 
             await transaction.commit();
         } catch (err) {

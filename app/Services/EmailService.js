@@ -12,7 +12,7 @@ const mailerOptions = {
     }       
 };
 
-class Email {
+class EmailService {
 
     constructor(){
         this.transporter = nodemailer.createTransport(mailerOptions);
@@ -67,4 +67,4 @@ class Email {
     }
 }
 
-module.exports = new Email();
+module.exports = new EmailService();

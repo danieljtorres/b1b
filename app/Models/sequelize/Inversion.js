@@ -38,7 +38,7 @@ module.exports = (sequelize, DataTypes) => {
     Inversion.belongsTo(models.Plan, { foreignKey:'plan_id', as: '_plan' } );
     Inversion.belongsTo(models.Estado, { foreignKey:'estado_id', as: '_estado' } );
     Inversion.hasMany(models.Rendimiento, { foreignKey:'inversion_id', as: '_rendimientos' } );
-    Inversion.hasMany(models.Pago, { foreignKey:'inversion_id', as: '_pagos' } );
+    Inversion.hasMany(models.Factura, { foreignKey:'inversion_id', as: '_facturas' } );
   };
   return Inversion;
 };

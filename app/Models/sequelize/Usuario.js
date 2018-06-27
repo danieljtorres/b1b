@@ -44,6 +44,7 @@ module.exports = (sequelize, DataTypes) => {
     Usuario.hasOne(models.Asociacion, { foreignKey:'usuario_id', as: '_asociacion', onDelete: 'cascade', hooks: true } );
     Usuario.hasMany(models.Inversion, { foreignKey:'usuario_id', as: '_inversiones', onDelete: 'cascade', hooks: true } );
     Usuario.belongsTo(models.Rol, { foreignKey:'rol_id', as: '_rol' } );
+    Usuario.hasMany(models.Evento, { foreignKey:'usuario_id', as: '_eventos' } );
   };
   Usuario.beforeCreate((usuario, options) => {
     usuario.password = require('password-hash').generate(usuario.password);

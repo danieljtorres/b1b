@@ -22,14 +22,17 @@ class RendimientoRepo {
                 include: [
                     { model: sq.Usuario, as: '_usuario' },
                     { model: sq.Plan, as: '_plan' },
-                    { model: sq.Rendimiento, as: '_rendimientos' }
+                    { model: sq.Rendimiento, as: '_rendimientos', include: [
+                            { model: sq.Factura, as: '_factura'}
+                        ] 
+                    }
                 ]
             });
         } catch (error) {
             cb(error)
         }
 
-        let plan, nRendimientos, monto, montoMensual, montoDiario, fechaAprobado, estado, planNuevo, plan_id;
+        let plan, nRendimientos, monto, montoMensual, montoDiario, fechaActual, fechaAprobado, diffFechas, estado, planNuevo, plan_id;
 
         try {
 
@@ -45,24 +48,30 @@ class RendimientoRepo {
                     //Guardo el primer rendimiento 1
                     montoMensual = (inversion.monto * (plan.porcentaje / 100) ) / plan.tiempo;
                     
-                    montoDiario = parseFloat(montoMensual) / 30
+                    montoDiario = montoMensual / 30
     
+                    fechaActual = moment();
                     fechaAprobado = moment(inversion.aprobado, 'YYYY/MM/DD');
                     
-                    monto = parseFloat(montoDiario) * ( 30 - parseInt( fechaAprobado.format('D') ) )
+                    diffFechas = fechaActual.diff(fechaAprobado, 'days')
 
-                    try {
-                        await sq.Rendimiento.create({
-                            inversion_id: inversion.id,
-                            monto: monto,
-                            codigo_inversion: inversion.codigo,
-                            correlativo: nRendimientos + 1
-                        }, { silent: true, transaction });
-        
-                    } catch (error) {
-                        throw error
+                    if (diffFechas >= 5) {
+
+                        monto = montoDiario * diffFechas
+
+                        try {
+                            await sq.Rendimiento.create({
+                                inversion_id: inversion.id,
+                                monto: monto,
+                                codigo_inversion: inversion.codigo,
+                                correlativo: nRendimientos + 1
+                            }, { silent: true, transaction });
+            
+                        } catch (error) {
+                            throw error
+                        }
+
                     }
-
     
                 } else if (nRendimientos > 0 && nRendimientos < plan.tiempo - 2) {
     
@@ -123,10 +132,12 @@ class RendimientoRepo {
                             codigo_inversion: inversion.codigo,
                             correlativo: nRendimientos + 1
                         }, { silent: true, transaction });
+
+                        await inversion.reload()
     
                         inversion._rendimientos.forEach(rendimiento => {
-                            if (rendimiento.pagado == null) {
-                                montoReinversion = parseFloat(montoReinversion) + parseFloat(rendimiento.monto);
+                            if (rendimiento._factura == null || rendimiento._factura.pagado == null) {
+                                montoReinversion = montoReinversion + rendimiento.monto;
                             }
                         });
     

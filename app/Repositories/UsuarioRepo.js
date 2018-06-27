@@ -5,11 +5,6 @@ const sequelize = sq.sequelize
 const Sequelize = sq.Sequelize;
 const Op = sq.Sequelize.Op;
 
-const Usuario    = sq.Usuario;
-const Rol        = sq.Rol;
-const Cliente    = sq.Cliente;
-const Asociacion = sq.Asociacion;
-
 const jwtService   = require('app/Services/JwtService');
 const emailService = require('app/Services/EmailService');
 
@@ -31,7 +26,7 @@ class UsuarioRepo {
         let usuario, token;
 
         try {
-            usuario = await Usuario.findOne({ 
+            usuario = await sq.Usuario.findOne({ 
                 where: {usuario: loginDatos.usuario}, 
                 attributes: ['id', 'usuario', 'password', 'avatar', 'activo', 'rol_id'] 
             });
@@ -66,14 +61,26 @@ class UsuarioRepo {
 
     async datos(req, cb) {
 
-        let auth = req.auth,
-            usuario;
+        let auth = req.auth; 
+        
+        let usuario, nReferidos, nInversiones = {}, totalInvertido, capitalActual, rendimientoGenerado;
 
         try {
-            usuario = await Usuario.findOne({
+            usuario = await sq.Usuario.findOne({
                 where: { id: auth.id },
-                include: [{model: Cliente, as: '_cliente'}]
+                include: [{model: sq.Cliente, as: '_cliente'}]
             })
+
+            usuario = usuario.toJSON();
+
+            nReferidos = await sq.Usuario.count({ where: { referencia : usuario.id } });
+            usuario._n_referidos = nReferidos;
+
+            nInversiones.total = await sq.Inversion.count({ where: { usuario_id : usuario.id, estado_id: { [Op.ne]: 4 } } });
+            nInversiones.solicitudes = await sq.Inversion.count({ where: { usuario_id : usuario.id, estado_id: 1 } });
+            nInversiones.activas = await sq.Inversion.count({ where: { usuario_id : usuario.id, estado_id: 2 } });
+            nInversiones.finalizadas = await sq.Inversion.count({ where: { usuario_id : usuario.id, estado_id: 3 } });
+            usuario._n_inversiones = nInversiones;
 
             if (usuario == null) {
                 cb(null, 'USUARIO_NO_ENCONTRADO');
@@ -92,9 +99,9 @@ class UsuarioRepo {
         let usuarios;
 
         try {
-            usuarios = await Usuario.findAll({ include: [
-                    { model: Cliente, as: '_cliente' },
-                    { model: Rol, as: '_rol' }
+            usuarios = await sq.Usuario.findAll({ include: [
+                    { model: sq.Cliente, as: '_cliente' },
+                    { model: sq.Rol, as: '_rol' }
                 ] 
             });
         } catch (error) {
@@ -110,9 +117,9 @@ class UsuarioRepo {
         let usuarios;
 
         try {
-            usuarios = await Usuario.findAll({ 
+            usuarios = await sq.Usuario.findAll({ 
                 where: { rol_id: 2 },
-                include: [{ model: Cliente, as: '_cliente' }] 
+                include: [{ model: sq.Cliente, as: '_cliente' }] 
             });
         } catch (error) {
             cb(error);
@@ -124,13 +131,30 @@ class UsuarioRepo {
 
     async clientes(cb) {
         
-        let usuarios;
+        let usuarios, nReferidos, nInversiones = {};
 
         try {
-            usuarios = await Usuario.findAll({ 
+            usuarios = await sq.Usuario.findAll({ 
                 where: { rol_id: 3 },
-                include: [{ model: Cliente, as: '_cliente' }] 
+                include: [{ model: sq.Cliente, as: '_cliente' }] 
             });
+
+            await _he.asyncForEach(usuarios, async (usuario, key) => {
+
+                usuario[key] = usuario[key].toJSON();
+
+                let id = usuario[key].id;
+
+                nReferidos = await sq.Usuario.count({ where: { referencia : id } });
+                usuario[key]._n_referidos = nReferidos;
+
+                nInversiones.total = await sq.Inversion.count({ where: { usuario_id : id, estado_id: { [Op.ne]: 4 } } });
+                nInversiones.solicitudes = await sq.Inversion.count({ where: { usuario_id : id, estado_id: 1 } });
+                nInversiones.activas = await sq.Inversion.count({ where: { usuario_id : id, estado_id: 2 } });
+                nInversiones.finalizadas = await sq.Inversion.count({ where: { usuario_id : id, estado_id: 3 } });
+                usuario[key]._n_inversiones = nInversiones;
+            });
+
         } catch (error) {
             cb(error);
             return null;
@@ -141,16 +165,33 @@ class UsuarioRepo {
 
     async asociados(cb) {
                 
-        let usuarios;
+        let usuarios, nReferidos, nInversiones = {};
 
         try {
-            usuarios = await Usuario.findAll({ 
+            usuarios = await sq.Usuario.findAll({ 
                 where: { rol_id: 3 },
                 include: [
-                    { model: Asociacion, as: '_asociacion', where: { usuario_id: Sequelize.col('Usuario.id') } },
-                    { model: Cliente, as: '_cliente' }
+                    { model: sq.Asociacion, as: '_asociacion', where: { usuario_id: Sequelize.col('Usuario.id') } },
+                    { model: sq.Cliente, as: '_cliente' }
                 ] 
             });
+
+            await _he.asyncForEach(usuarios, async (usuario, key) => {
+
+                usuario[key] = usuario[key].toJSON();
+
+                let id = usuario[key].id;
+
+                nReferidos = await sq.Usuario.count({ where: { referencia : id } });
+                usuario[key]._n_referidos = nReferidos;
+
+                nInversiones.total = await sq.Inversion.count({ where: { usuario_id : id, estado_id: { [Op.ne]: 4 } } });
+                nInversiones.solicitudes = await sq.Inversion.count({ where: { usuario_id : id, estado_id: 1 } });
+                nInversiones.activas = await sq.Inversion.count({ where: { usuario_id : id, estado_id: 2 } });
+                nInversiones.finalizadas = await sq.Inversion.count({ where: { usuario_id : id, estado_id: 3 } });
+                usuario[key]._n_inversiones = nInversiones;
+            });
+
         } catch (error) {
             cb(error);
             return null;
@@ -166,7 +207,7 @@ class UsuarioRepo {
         let params = req.params,
             id;
             
-        let usuario, usuarios;
+        let usuario, usuarios, nReferidos, nInversiones = {}, totalInvertido;
 
         if (params.id && auth.rol == 3) {
             cb(null, 'PERMISOS_INVALIDOS');
@@ -181,9 +222,9 @@ class UsuarioRepo {
         }
 
         try {
-            usuario = await Usuario.findOne({ 
+            usuario = await sq.Usuario.findOne({ 
                 where: { id: id },
-                include: [{model: Asociacion, as: '_asociacion'}]
+                include: [{model: sq.Asociacion, as: '_asociacion'}]
             });
 
             if (usuario == null) {
@@ -196,12 +237,27 @@ class UsuarioRepo {
                 return null;
             }
 
-            usuarios = await Usuario.findAll({ 
+            usuarios = await sq.Usuario.findAll({ 
                 where: { referencia: id },
-                include: [{ model: Cliente, as: '_cliente' }]
+                include: [{ model: sq.Cliente, as: '_cliente' }]
             });
 
-            //añadir numero de inversiones, total invertido
+            await _he.asyncForEach(usuarios, async (usuario, key) => {
+
+                usuario[key] = usuario[key].toJSON();
+
+                let id = usuario[key].id;
+
+                nReferidos = await sq.Usuario.count({ where: { referencia : id } });
+                usuario[key]._n_referidos = nReferidos;
+
+                nInversiones.total = await sq.Inversion.count({ where: { usuario_id : id } });
+                nInversiones.solicitudes = await sq.Inversion.count({ where: { usuario_id : id, estado_id: 1 } });
+                nInversiones.activas = await sq.Inversion.count({ where: { usuario_id : id, estado_id: 2 } });
+                nInversiones.finalizadas = await sq.Inversion.count({ where: { usuario_id : id, estado_id: 3 } });
+                usuario[key]._n_inversiones = nInversiones;
+            });
+
         } catch (err) {
             cb(err);
             return null;
@@ -229,8 +285,8 @@ class UsuarioRepo {
         try {
             transaction = await sq.sequelize.transaction();
 
-            usuario = await Usuario.create(usuarioDatos, { 
-                include: [{ model: Cliente, as: '_cliente' }], 
+            usuario = await sq.Usuario.create(usuarioDatos, { 
+                include: [{ model: sq.Cliente, as: '_cliente' }], 
                 silent: true, 
                 transaction
             });
@@ -259,7 +315,7 @@ class UsuarioRepo {
         try {
             transaction = await sq.sequelize.transaction();
 
-            usuario = await Usuario.findOne({ 
+            usuario = await sq.Usuario.findOne({ 
                 where: { codigo: params.codigo },
                 transaction
             })
@@ -301,7 +357,7 @@ class UsuarioRepo {
         }
 
         try {
-            usuario = await Usuario.findById( id , { include: [{ model: Cliente, as: '_cliente' }] });
+            usuario = await sq.Usuario.findById( id , { include: [{ model: sq.Cliente, as: '_cliente' }] });
 
             if (usuario == null) {
                 cb(null, 'USUARIO_NO_ENCONTRADO');
@@ -385,7 +441,7 @@ class UsuarioRepo {
         try {
             transaction = await sequelize.transaction();
 
-            usuario = await Usuario.findById( auth.id, transaction)
+            usuario = await sq.Usuario.findById( auth.id, transaction)
 
             if (usuario == null) {
                 cb(null, 'USUARIO_NO_ENCONTRADO');
@@ -422,8 +478,8 @@ class UsuarioRepo {
         try {
             transaction = await sq.sequelize.transaction();
 
-            usuario = await Usuario.findById( params.id , {
-                include:  [{ model: Cliente, as: '_cliente' }],
+            usuario = await sq.Usuario.findById( params.id , {
+                include:  [{ model: sq.Cliente, as: '_cliente' }],
                 transaction
             })
 

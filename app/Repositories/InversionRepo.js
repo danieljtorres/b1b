@@ -6,6 +6,7 @@ const Sequelize = sq.Sequelize;
 const Op = sq.Sequelize.Op;
 
 const emailService = require('app/Services/EmailService');
+const eventoService = require('app/Services/EventoService');
 
 const _he = require('app/Helpers');
 
@@ -62,14 +63,36 @@ class InversionRepo {
                 where: { usuario_id: usuario.id },
                 include: [
                     { model: sq.Plan, as: '_plan' },
-                    includeEstado
+                    includeEstado,
                 ] 
             });
 
             await _he.asyncForEach(inversiones, async (inversion, key) => {
-                let porCobrar = await sq.Rendimiento.sum('monto', { where: { pagado: null, inversion_id: inversion.id } });
+                let porCobrar = await sq.Rendimiento.sum('rendimiento.monto', { 
+                    where: { 
+                        inversion_id: inversion.id,
+                        [Op.or]: {
+                            '$_factura.pagado$': null
+                        }
+                    },
+                    include: [
+                        { model: sq.Factura, as: '_factura' }
+                    ]
+                });
+
+                let porPagar = await sq.Rendimiento.sum('rendimiento.monto', { 
+                    where: { 
+                        inversion_id: inversion.id
+                    },
+                    include: [
+                        { model: sq.Factura, as: '_factura', where: { pagado: null } }
+                    ]
+                });
+
+
                 inversiones[key] = inversiones[key].toJSON();
                 inversiones[key]._por_cobrar = porCobrar || 0;
+                inversiones[key]._pago_solicitado = porPagar || 0;
             });
         } catch (error) {
             cb(error);
@@ -77,6 +100,47 @@ class InversionRepo {
         }
 
         cb(null, inversiones);
+    }
+
+    async historial(req, cb) {
+        
+        const auth = req.auth;
+        let params = req.params;
+
+        let where, inversion;
+
+        try {
+
+            if (auth.rol == 3) {
+                where = { id: params.id, usuario_id: auth.id }
+            } else {
+                where = { id: params.id }
+            }
+
+            inversion = await sq.Inversion.findOne({
+                where: where,
+                include: [
+                    { model: sq.Plan, as: '_plan' },
+                    { model: sq.Factura, as: '_facturas' },
+                    { model: sq.Estado, as: '_estado' },
+                    { model: sq.Rendimiento, as: '_rendimientos', include: [
+                            { model: sq.Factura, as: '_factura' }
+                        ] 
+                    }
+                ]
+            });
+
+            if (inversion == null) {
+                cb(null, 'INVERSION_NO_ENCONTRADO');
+                return null;
+            }
+
+        } catch (error) {
+            cb(error);
+            return null;
+        }
+
+        cb(null, inversion);
     }
 
     async guardar(req, cb) {
@@ -177,6 +241,14 @@ class InversionRepo {
                 estado_id: 2
             }, { silent: true , transaction });
 
+            // Registro de actividad de administrador
+            eventoService.setUser(req.auth.id).addToBody({
+                accion: 'MODIFICAR',
+                descripcion: '${inicio} aprobado la solicitud de inversion ${final}',
+                tablas: [{inversiones: inversion.id}]
+            }).addToTables('inversiones');
+            await eventoService.save(transaction);
+
             // Enviar email de inversion aprobada a usuario
             emailService.setMssg({
                 to: inversion._usuario.email,
@@ -250,7 +322,7 @@ class InversionRepo {
             transaction = await sequelize.transaction();
 
             await _he.asyncForEach(rendimientos, async (rendimiento, key) => {
-                montoFactura += montoFactura + rendimiento.monto;
+                montoFactura = parseFloat(montoFactura) + parseFloat(rendimiento.monto);
 
                 try {
                     await rendimiento.update({ codigo_factura: codigo },{ transaction });
@@ -261,7 +333,7 @@ class InversionRepo {
 
             facturaDatos.monto = montoFactura;
 
-            factura = await sq.Pago.create(facturaDatos, { silent: true, transaction });
+            factura = await sq.Factura.create(facturaDatos, { silent: true, transaction });
 
             await transaction.commit();
 
@@ -276,6 +348,7 @@ class InversionRepo {
 
         cb(null, factura.toJSON());
     }
+
 }
 
 const generarCodigo = async (id) => {
