@@ -21,6 +21,10 @@ import AdminProfile from "@/views/pages/admin/Profile.vue";
 import AdminPlans from "@/views/pages/admin/Plans.vue";
 import AdminUsers from "@/views/pages/admin/users.vue";
 import AdminTableList from "@/views/pages/admin/TableList.vue";
+import AdminAsociated from  "@/views/pages/admin/Asociated.vue";
+import AdminAsociatedList from "@/views/pages/admin/Asociated/AsociatedList.vue"
+import AdminAsociatedAprobation from "@/views/pages/admin/Asociated/AsociatedAprobation.vue"
+
 
 // GUARDS-----
 import checkLoginAuth from '@/_guards/CheckLoginAuth.guard.js';
@@ -43,11 +47,6 @@ const routes = [{
     component: CustomerProfile
 
   },{
-    path: "notifications",
-    name: "CustomerNotifications",
-    component: CustomerNotifications
-
-  },{
     path: "icons",
     name: "CustomerIcons",
     component: CustomerIcons
@@ -56,11 +55,6 @@ const routes = [{
     path: "investments",
     name: "CustomerInvestments",
     component: CustomerInvestments
-  },{
-    path: "investments/new",
-    component: CustomerInvestmentsNew,
-    name: "CustomerInvestmentsNew",
-    /*beforeEnter: checkDataUser()*/
   },{
     path: "typography",
     name: "CustomerTypography",
@@ -95,6 +89,19 @@ const routes = [{
     name: "AdminUsers"
 
   },{
+    path: "asociated",
+    component: AdminAsociated,
+    name: "AdminAsociated"
+
+  },{
+      path: "asociated/List",
+      component: AdminAsociatedList,
+      name: "AdminAsociatedList"
+  },{
+    path: "asociated/aprobation",
+    component: AdminAsociatedAprobation,
+    name: "AdminAsociatedAprobation"
+},{
     path: "planes",
     component: AdminPlans,
     name: "AdminPlans"

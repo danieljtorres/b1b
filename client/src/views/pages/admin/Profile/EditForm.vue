@@ -1,161 +1,151 @@
 <template>
-  <card class="card col-12 center" style="margin:auto;" title="Cree Su Cuenta">
-    <div class="container">
-             <modal name="hello-world">
-  <div class="box">
-    <div class="box-part" id="bp-left">
-      <div class="partition" id="partition-register">
-        <div class="partition-title">Cambiar Contraseña</div>
-        <div class="partition-form">
-          <form autocomplete="false">
 
-   
-           <input id="n-password1" type="password" placeholder="Password">
-            <input id="n-password2" type="password" placeholder="Password">
-          </form>
-          <div class="button-set">
-            <button id="goto-signin-btn">Confirmar</button>
-           
-          </div>
+    <div>
+       <modal name="change-password">
+      <div class="box">
+        <div class="box-part" id="bp-left">
+          <div class="partition" id="partition-register">
+            <div class="partition-title">Cambiar Contraseña</div>
+            <div class="partition-form">
+              <form autocomplete="false">
+                <input id="n-password1" type="password" placeholder="Password">
+                <input id="n-password2" type="password" placeholder="Password">
+              </form>
+              <div class="button-set">
+                <button id="goto-signin-btn">Confirmar</button>
+              </div>
 
-        </div>
-      </div>
-    </div>
-   
-  </div>
-</modal> 
-      <form style="margin:auto;" @submit.prevent>
-        <div class="row">
-          <div class="col-md-5">
-            <fg-input type="text"
-                      label="País"
-                      :disabled="true"
-                      placeholder="País"
-                      v-model="user.pais_id">
-            </fg-input>
-          </div>
-          <div class="col-md-3">
-
-            <fg-input type="text"
-                      label="Nombres"
-                      placeholder="Nombres"
-                      v-model="user.nombres">
-            </fg-input>
-          </div>
-          <div class="col-md-4">
-            <fg-input type="text"
-                      label="Apellidos"
-                      placeholder="Apellidos"
-                      v-model="user.apellidos">
-            </fg-input>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-md-6">
-            <fg-input type="number"
-                      label="Telefono"
-                      placeholder="Numero Telefonico"
-                      v-model="user.telefono">
-            </fg-input>
-          </div>
-          <div class="col-md-6">
-            <fg-input type="text"
-                      label="Nombre de Usuario"
-                      placeholder="Usuario"
-                      v-model="user.usuario">
-            </fg-input>
-          </div>
-        </div>
-
-    
-
-        <div class="row">
-          <div class="col-md-6">
-            <fg-input type="email"
-                      label="Email"
-                      placeholder="Email"
-                      v-model="user.email">
-            </fg-input>
-          </div>
-          <div class="col-md-6">
-            <fg-input type="password"
-                      label="Clave"
-                      placeholder="Clave"
-                      v-model="user.password">
-            </fg-input>
-          </div>
-        
-        </div>
-
-       <!--  <div class="row">
-          <div class="col-md-12">
-            <div class="form-group">
-              <label>About Me</label>
-              <textarea rows="5" class="form-control border-input"
-                        placeholder="Here can be your description"
-                        v-model="user.aboutMe">
-
-              </textarea>
             </div>
           </div>
-        </div> -->
-        <div class="text-center">
-          <p-button type="info"
-                    round
-                    @click.native.prevent="updateProfile">
-            Registrarse
-          </p-button>
         </div>
-        <div class="clearfix"></div>
-      </form>
-     
-    </div>
-    
-  </card>
-   
+      
+      </div>
+    </modal> 
+    <form  class="md-layout" @submit.prevent>
+      <md-card style="    margin-top: 0 !important;" md-with-hover class="md-layout-item md-size-100 md-small-size-100">
+        <md-card-header>
+          <div class="md-title">Mis datos</div>
+        </md-card-header>
+
+        <md-card-content>
+          <div class="md-layout md-gutter">
+            <div class="md-layout-item md-small-size-100">
+              <md-field >
+                <label for="first-name">nombres</label>
+                <md-input  v-model="user.nombres" />
+              </md-field>
+            </div>
+
+            <div class="md-layout-item md-small-size-100">
+              <md-field >
+                <label for="last-name">Apellidos</label>
+                <md-input v-model="user.apellidos"  />
+              </md-field>
+            </div>
+          </div>
+
+          <div class="md-layout md-gutter">
+            <div class="md-layout-item md-small-size-100">
+              <md-field >
+                <label >País</label>
+                <md-select v-if="countries.length > 0" v-model="user.pais_id">
+                  <md-option>Elegir</md-option>
+                  <md-option v-for="country in countries" :key="country.id" :value="country.id">{{country.nombre}}</md-option>
+                 
+                </md-select>
+              
+              </md-field>
+            </div>
+
+            <div class="md-layout-item md-small-size-100">
+              <md-field >
+                <label for="age">Telefono</label>
+                <md-input type="number" v-model="user.telefono" />
+              </md-field>
+            </div>
+          </div>
+
+          <md-field>
+            <label for="email">Email</label>
+            <md-input type="email" v-model="user.email"/>
+          </md-field>
+        </md-card-content>
+
+
+        <md-card-actions>
+          <md-button type="submit" @click.native.prevent="updateProfile"  class="md-primary"  >Actualizar</md-button>
+          <md-button @click.native.prevent="show"  class="md-primary"> cambiar clave </md-button>
+         </md-card-actions>
+      </md-card>
+
+    </form>
+  </div>
+   <!-- @click.native.prevent="updateProfile" 
+     <select class="form-control" v-if="countries.length > 0">
+              <option v-for="country in countries" :value="country.id" :selected="country.id == user.pais_id">{{country.nombre}}</option>
+            </select>
+   -->
 </template>
 
 <script>
 
-import authService from "@/_services/Auth.service";
+import authService from '@/_services/Auth.service';
+import countryService from '@/_services/Country.service';
 
-//import NotificationTemplate from "../Notifications/NotificationTemplate";
+//import EditProfileSuccess from "../Notifications/NotificationTemplate";
 
 export default {
-  data() {
+  props: ['userData'],
+  data () {
     return {
       user: {
-        pais_id: 1,
-        nombres: "",
-        apellidos: "",
-        telefono: "",
-        usuario: "",
-        email: "",
-        password: ""
-      }
-    };
+        pais_id: this.userData.pais_id,
+        nombres: this.userData.nombres,
+        apellidos: this.userData.apellidos,
+        telefono: this.userData.telefono,
+        usuario: this.userData.usuario,
+        email: this.userData.email,
+      },
+      countries: [],
+      c: ['foo', 'bar', 'baz'],
+    }
   },
+  beforecreate(){  },
+  created() {
+    this.getCountries();
+  },
+
   methods: {
+   
     show() {
-      this.$modal.show("hello-world");
+      this.$modal.show("change-password");
     },
     hide() {
-      this.$modal.hide("hello-world");
+      this.$modal.hide("change-password");
     },
 
     updateProfile() {
       authService.edit(this.user).then(response => {
-        /*this.$notify({
-          component: NotificationTemplate,
-          icon: "ti-check",
-          horizontalAlign: "right",
-          verticalAlign: "bottom",
+
+        this.$notify({
+          title: "Sus datos se han actualizado con exito!",
           type: "success"
-        });*/
+        });
+
+        this.$emit('updated', this.user);
       },err => {
         console.log(err);
       });
+    },
+
+    getCountries() {
+      countryService.getAll().then(response => {
+
+        this.countries = response.data.data;
+
+      },err => {
+        console.log(err);
+      })
     }
   }
 };

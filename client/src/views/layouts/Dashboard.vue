@@ -10,7 +10,7 @@
         <sidebar-link to="/profile" name="MI PERFIL" icon="account_box"/>
         <sidebar-link to="/investments" name="Mis Inversiones" icon="book"/>
         <sidebar-link to="/icons" name="USTOMER ICONS" icon="book"/>
-        <sidebar-link to="/notifications" name="CUSTOMER NOTIFICATIONS" icon="book"/>
+  
       </template>
 
       <mobile-menu>
@@ -25,6 +25,8 @@
         <sidebar-link v-if="showByRol([1,2])" to="/admin/home" name="DASHBOARD" icon="dashboard"/>
         <sidebar-link v-if="showByRol([1,2])" to="/admin/perfil" name="MI PERFIL" icon="person"/>
         <sidebar-link v-if="showByRol([1,2])" to="/admin/usuarios" name="USUARIOS" icon="people"/>
+        <sidebar-link  v-if="showByRol([1,2])" to="/admin/asociated" name="Asociados" icon="book"/>
+
         <sidebar-link v-if="showByRol([1,2])" to="/admin/planes" name="PLANES" icon="chrome_reader_mode"/>
         <sidebar-link v-if="showByRol([1,2])" to="/admin/movimientos" name="ADMIN MOVES" icon="library_books"/>
       </template>
