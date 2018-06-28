@@ -1,20 +1,15 @@
 'use strict'
 
-import axios from 'axios';
+import Service from './Service';
 
-const api = axios.create({
-    baseURL: 'http://127.0.0.1:90/api/v0/planes/',
-})
-
-class PlanService {
+class PlanService extends Service {
     getForInvestments() {
-        return api.get('inversiones');
+        return super.api().get('planes/inversiones');
     }
 
     save(plan){
 
-        return api.post('',{
-
+        return super.api().post('planes',{
             titulo: plan.title,
             tipo: plan.type,
             descripcion: plan.content,
@@ -24,19 +19,15 @@ class PlanService {
             min: plan.min,
             max: plan.max,
             rendimiento: null
-
         }, {
             headers: {
-                Accept: "application/json",
-                "Content-type": "application/json",
-                Authorization: localStorage.getItem("token")
+                Authorization: super.token()
             }
         });
-
     }
 
     delete(id){
-        return api.delete(''+id);
+        return super.api().delete('planes'+id);
     }
 }
 

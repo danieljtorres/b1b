@@ -1,31 +1,15 @@
 'use strict'
 
-import axios from 'axios';
-import jwtDecode from 'jwt-decode';
+import Service from './Service';
 
-const api = axios.create({
-    baseURL: 'http://127.0.0.1:90/api/v0/asociaciones/',
-    headers: {
-        "Accept": "application/json",
-        "Content-type": "application/json",
-        "Authorization": localStorage.getItem("token")
-    }
-})
-
-
-class AsociatedService {
+class AsociatedService extends Service {
 
     associatesList() {
-
-        return api.get('');
+        return super.api().get('asociaciones');
     }
     associatesApproval(id) {
-
-        return api.put('' + id);
+        return super.api().put('asociaciones' + id);
     }
-
-
 }
-
 
 export default new AsociatedService();

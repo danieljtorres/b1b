@@ -1,23 +1,14 @@
 'use strict'
 
-import axios from 'axios';
-import jwtDecode from 'jwt-decode';
+import Service from "./Service";
 
-const api = axios.create({
-    baseURL: 'http://127.0.0.1:90/api/v0/usuarios/clientes',
-    headers: {
-        "Accept": "application/json",
-        "Content-type": "application/json",
-        "Authorization": localStorage.getItem("token")
-    }
-});
-
-class UserService {
+class UserService extends Service {
 
     getClients() {
-
-        return api.get('', {
-
+        return super.api().get('usuarios/clientes', {
+            headers: {
+                "Authorization": super.token()
+            }
         });
     }
 

@@ -1,14 +1,10 @@
 'use strict'
 
-import axios from 'axios';
+import Service from './Service';
 
-const api = axios.create({
-    baseURL: 'http://127.0.0.1:90/api/v0/paises/',
-})
-
-class CountryService {
+class CountryService extends Service {
     getAll() {
-        return api.get('');
+        return super.api().get('paises');
     }
 }
 

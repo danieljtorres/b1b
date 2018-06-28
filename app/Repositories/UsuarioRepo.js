@@ -432,7 +432,12 @@ class UsuarioRepo {
             return null;  
         }
 
+        console.log(avatar);
+
         const nombreAvatar = _he.randomStr(16) + '_' + auth.id + '.' + avatar.type.split('/')[1];
+        
+        console.log(nombreAvatar)
+        
         const temporal     = avatar.path;
         const pathObjetivo = '/resources/avatares/' ;
 
@@ -441,7 +446,7 @@ class UsuarioRepo {
         try {
             transaction = await sequelize.transaction();
 
-            usuario = await sq.Usuario.findById( auth.id, transaction)
+            usuario = await sq.Usuario.findById( auth.id, {transaction})
 
             if (usuario == null) {
                 cb(null, 'USUARIO_NO_ENCONTRADO');
@@ -450,12 +455,13 @@ class UsuarioRepo {
 
             await _he.uploadFile(temporal, pathObjetivo, nombreAvatar)
 
-            await usuario.update({avatar: nombre}, transaction);
+            await usuario.update({avatar: nombreAvatar}, {transaction});
 
             await transaction.commit()
 
             await _he.deleteFile(pathObjetivo + usuario.avatar);
         } catch (err) {
+            console.log(err)
             await transaction.rollback();
 
             if (err.name == "SequelizeValidationError") err.status = 400;
