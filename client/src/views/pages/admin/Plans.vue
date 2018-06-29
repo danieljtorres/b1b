@@ -231,7 +231,7 @@ export default {
 
         PlanListing() {
 
-            PlanService.getPlans().then(
+            PlanService.getForInvestments().then(
                 response => {
                     //handle success
                     this.plans = response.data.data;
