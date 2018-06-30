@@ -10,9 +10,11 @@ class UsuarioController extends Controller {
         UsuarioRepo.todos((err, datos) => {
             if (err) return res.status(500).json({data: null, err: err.message});
 
-            if (!datos.length) return res.status(404).json({data: []});
+            if (!datos.datos.length) return res.status(404).json({data: []});
 
-            return res.status(200).json({data: datos})
+            if (datos.cabeceras) res.set(datos.cabeceras);
+
+            return res.status(200).json({data: datos.datos})
         })
     }
 
@@ -20,19 +22,23 @@ class UsuarioController extends Controller {
         UsuarioRepo.admins((err, datos) => {
             if (err) return res.status(500).json({data: null, err: err.message});
 
-            if (!datos.length) return res.status(404).json({data: []});
+            if (!datos.datos.length) return res.status(404).json({data: []});
 
-            return res.status(200).json({data: datos})
+            if (datos.cabeceras) res.set(datos.cabeceras);
+
+            return res.status(200).json({data: datos.datos})
         })
     }
 
     clientes(req, res) {
-        UsuarioRepo.clientes((err, datos) => {
+        UsuarioRepo.clientes(req, (err, datos) => {
             if (err) return res.status(500).json({data: null, err: err.message});
 
-            if (!datos.length) return res.status(404).json({data: []});
+            if (!datos.datos.length) return res.status(404).json({data: []});
 
-            return res.status(200).json({data: datos})
+            if (datos.cabeceras) res.set(datos.cabeceras);
+
+            return res.status(200).json({data: datos.datos})
         })
     }
 
@@ -40,9 +46,11 @@ class UsuarioController extends Controller {
         UsuarioRepo.asociados((err, datos) => {
             if (err) return res.status(500).json({data: null, err: err.message});
 
-            if (!datos.length) return res.status(404).json({data: []});
+            if (!datos.datos.length) return res.status(404).json({data: []});
 
-            return res.status(200).json({data: datos})
+            if (datos.cabeceras) res.set(datos.cabeceras);
+
+            return res.status(200).json({data: datos.datos})
         })
     }
 
@@ -50,9 +58,11 @@ class UsuarioController extends Controller {
         UsuarioRepo.referidosPorUsuario(req, (err, datos) => {
             if (err) return res.status(500).json({data: null, err: err.message});
 
-            if (!datos.length) return res.status(404).json({data: []});
+            if (!datos.datos.length) return res.status(404).json({data: []});
 
-            return res.status(200).json({data: datos})
+            if (datos.cabeceras) res.set(datos.cabeceras);
+
+            return res.status(200).json({data: datos.datos})
         })
     }
 

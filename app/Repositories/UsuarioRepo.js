@@ -129,30 +129,40 @@ class UsuarioRepo {
         cb(null, usuarios);
     }
 
-    async clientes(cb) {
-        
-        let usuarios, nReferidos, nInversiones = {};
+    async clientes(req, cb) {
+
+        let query = req.query;
+
+        let result, clientes, totalClientes, nReferidos, nInversiones = {}, limit, offset;
+
+        limit = parseInt(query.limit) || 10;
+        offset = parseInt(query.offset) || 0;
 
         try {
-            usuarios = await sq.Usuario.findAll({ 
+            result = await sq.Usuario.findAndCountAll({ 
                 where: { rol_id: 3 },
+                limit: limit,
+                offset: offset,
                 include: [{ model: sq.Cliente, as: '_cliente' }] 
             });
 
-            await _he.asyncForEach(usuarios, async (usuario, key) => {
+            clientes = result.rows;
+            totalClientes = result.count;
 
-                usuarios[key] = usuarios[key].toJSON();
+            await _he.asyncForEach(clientes, async (usuario, key) => {
 
-                let id = usuarios[key].id;
+                clientes[key] = clientes[key].toJSON();
+
+                let id = clientes[key].id;
 
                 nReferidos = await sq.Usuario.count({ where: { referencia : id } });
-                usuarios[key]._n_referidos = nReferidos;
+                clientes[key]._n_referidos = nReferidos;
 
                 nInversiones.total = await sq.Inversion.count({ where: { usuario_id : id, estado_id: { [Op.ne]: 4 } } });
                 nInversiones.solicitudes = await sq.Inversion.count({ where: { usuario_id : id, estado_id: 1 } });
                 nInversiones.activas = await sq.Inversion.count({ where: { usuario_id : id, estado_id: 2 } });
                 nInversiones.finalizadas = await sq.Inversion.count({ where: { usuario_id : id, estado_id: 3 } });
-                usuarios[key]._n_inversiones = nInversiones;
+                clientes[key]._n_inversiones = nInversiones;
             });
 
         } catch (error) {
@@ -160,7 +170,12 @@ class UsuarioRepo {
             return null;
         }
 
-        cb(null, usuarios);
+        cb(null, {
+            datos : clientes,
+            cabeceras: {
+                "Total-Rows": totalClientes
+            }
+        });
     }
 
     async asociados(cb) {
