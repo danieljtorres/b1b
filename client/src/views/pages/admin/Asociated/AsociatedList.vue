@@ -33,7 +33,7 @@
       </md-table-row>
     </md-table>
 
-    <dm-paginator v-bind:total="total" v-bind:limit="limit"></dm-paginator>
+    <dm-paginator v-bind:total="total" v-bind:limit="limit" @pageChanged="fetchUsers($event)"></dm-paginator>
   </div>
 </template>
 
@@ -99,50 +99,64 @@
           dni: "84918492"
         },
         {
-          id: 1,
+          id: 7,
           name: "Shawna Dubbin",
           email: "sdubbin0@geocities.com",
           phone: "13314444",
           dni: "84918492"
         },
         {
-          id: 2,
+          id: 8,
           name: "Odette Demageard",
           email: "odemageard1@spotify.com",
           phone: "13314444",
           dni: "84918492"
         },
         {
-          id: 3,
+          id: 9,
           name: "Vera Taleworth",
           email: "vtaleworth2@google.ca",
           phone: "13314444",
           dni: "84918492"
         },
         {
-          id: 4,
+          id: 10,
           name: "Lonnie Izkovitz",
           email: "lizkovitz3@youtu.be",
           phone: "13314444",
           dni: "84918492"
         },
         {
-          id: 5,
+          id: 11,
           name: "Thatcher Stave",
           email: "tstave4@reference.com",
           phone: "13314444",
           dni: "84918492"
         },
         {
-          id: 6,
+          id: 12,
           name: "Karim Chipping",
           email: "kchipping5@scribd.com",
+          phone: "13314444",
+          dni: "84918492"
+        },
+        {
+          id: 13,
+          name: "Shawna Dubbin",
+          email: "sdubbin0@geocities.com",
+          phone: "13314444",
+          dni: "84918492"
+        },
+        {
+          id: 14,
+          name: "Odette Demageard",
+          email: "odemageard1@spotify.com",
           phone: "13314444",
           dni: "84918492"
         }
       ],
       total: 0,
-      limit: 2
+      limit: 1
     }),
     methods: {
       newUser () {
@@ -150,6 +164,10 @@
       },
       searchOnTable () {
         this.searched = searchByName(this.users, this.search)
+      },
+      fetchUsers($event) {
+        console.log($event);
+        alert($event);
       }
     },
     created () {
