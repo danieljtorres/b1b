@@ -47,5 +47,15 @@
 
 }
 
+.md-card{
+         margin-top:0% !important; 
+       
+
+}
+.button-blue{
+    background-color: var(--md-theme-demo-light-primary,#448aff) !important;
+    color:white !important;
+}
+
 [v-cloak] > * { display:none; }
 [v-cloak]::before { content: "loading...aaaaaaAAAAAAAAAAA"; }

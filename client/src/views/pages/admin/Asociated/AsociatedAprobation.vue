@@ -27,43 +27,7 @@
       </md-table-row>
     </md-table>
   </div>
-  <!--  <div class="md-layout md-gutter">
-        <div class="md-layout-item">
-       <div class="card-header">
-            <h4 class="card-title">Asociaciones pendientes</h4>
-            <p class="card-category">aprobar solicitudes de asociacion</p>
-        </div>
 
-        <div class="table-responsive">
-            <table class="table table-striped">
-                <thead>
-                    <th>Usuario</th>
-                    <th>Email</th>
-
-                    <th>estatus</th>
-
-                </thead>
-                <tbody v-for="requested in to_be_approved">
-                    <tr>
-                        <td>
-                            {{requested.creado}}
-                        </td>
-                        <td>
-                            {{requested._usuario.email}}
-                        </td>
-                        <td>
-                            <button
-                                @click="approvalRequest(requested.id)"
-                                class="btn btn-primary"
-                            >aprobar</button>
-                        </td>
-                    </tr>
-
-                </tbody>
-            </table>        
-        </div>
-    </div>
-      </div> -->
 </template>
 
 
