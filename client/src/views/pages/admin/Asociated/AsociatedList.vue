@@ -7,6 +7,13 @@
         </div>
 
         <md-field md-clearable class="md-toolbar-section-end">
+          <md-select v-model="limit" name="limit" id="limit">
+            <md-option value="1">1</md-option>
+            <md-option value="3">3</md-option>
+            <md-option value="5">5</md-option>
+          </md-select>
+        </md-field>
+        <md-field md-clearable class="md-toolbar-section-end">
           <md-input placeholder="Busca el nombre" v-model="search" @input="searchOnTable" />
         </md-field>
       </md-table-toolbar>
@@ -25,6 +32,8 @@
         <md-table-cell md-label="identificacion" md-sort-by="dni">{{ item.dni }}</md-table-cell>
       </md-table-row>
     </md-table>
+
+    <dm-paginator v-bind:total="total" v-bind:limit="limit"></dm-paginator>
   </div>
 </template>
 
@@ -88,8 +97,52 @@
           email: "kchipping5@scribd.com",
           phone: "13314444",
           dni: "84918492"
+        },
+        {
+          id: 1,
+          name: "Shawna Dubbin",
+          email: "sdubbin0@geocities.com",
+          phone: "13314444",
+          dni: "84918492"
+        },
+        {
+          id: 2,
+          name: "Odette Demageard",
+          email: "odemageard1@spotify.com",
+          phone: "13314444",
+          dni: "84918492"
+        },
+        {
+          id: 3,
+          name: "Vera Taleworth",
+          email: "vtaleworth2@google.ca",
+          phone: "13314444",
+          dni: "84918492"
+        },
+        {
+          id: 4,
+          name: "Lonnie Izkovitz",
+          email: "lizkovitz3@youtu.be",
+          phone: "13314444",
+          dni: "84918492"
+        },
+        {
+          id: 5,
+          name: "Thatcher Stave",
+          email: "tstave4@reference.com",
+          phone: "13314444",
+          dni: "84918492"
+        },
+        {
+          id: 6,
+          name: "Karim Chipping",
+          email: "kchipping5@scribd.com",
+          phone: "13314444",
+          dni: "84918492"
         }
-      ]
+      ],
+      total: 0,
+      limit: 2
     }),
     methods: {
       newUser () {
@@ -100,7 +153,8 @@
       }
     },
     created () {
-      this.searched = this.users
+      this.searched = this.users;
+      this.total = this.users.length;
     }
   }
 </script>

@@ -8,6 +8,7 @@ import "vue-notifyjs/themes/default.css";
 
 //componentes externos a la plantilla 
 import vSelect from 'vue-select/src/components/Select';
+import dmPaginator from './components/Paginator';
 import VModal from 'vue-js-modal';
 import VeeValidate from 'vee-validate';
 import { Validator } from 'vee-validate';
@@ -50,6 +51,7 @@ Vue.use(PaperDashboard);
 // instanciando componentes externos a la plantilla
 Validator.localize('custom',dictionary);
 Vue.component('v-select', vSelect);
+Vue.component('dm-paginator', dmPaginator);
 Vue.use(VModal);
 Vue.use(VeeValidate, {events: ''});
 

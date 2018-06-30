@@ -4,9 +4,13 @@ import DropDown from "./Dropdown.vue";
 import PaperTable from "./PaperTable.vue";
 import Button from "./Button";
 
+import Paginator from "./Paginator.vue";
+
+
 import Card from "./Cards/Card.vue";
 import ChartCard from "./Cards/ChartCard.vue";
 import StatsCard from "./Cards/StatsCard.vue";
+
 
 import SidebarPlugin from "./SidebarPlugin/index";
 
@@ -30,5 +34,6 @@ export {
   PaperTable,
   DropDown,
   Button,
+  Paginator,
   SidebarPlugin
 };
