@@ -32,7 +32,7 @@
                 ...
             </md-button>
         </div>
-        <div class="md-layout-item md-large-size-5 md-medium-size-10 md-small-size-15">
+        <div v-if="totalPages > 1" class="md-layout-item md-large-size-5 md-medium-size-10 md-small-size-15">
             <md-button @click="setPage(totalPages)" class="md-raised paginator-button" v-bind:class="{'md-primary': page == totalPages}">
                 {{totalPages}}
             </md-button>
@@ -47,7 +47,7 @@
 <script>
 export default {
     props: {
-        total: Number,
+        total: Number | String,
         limit: Number | String,
     },
     data() {
@@ -69,7 +69,7 @@ export default {
         },
         total: function(n,o) {
             this.page = 1;
-            this.totalPages = Math.ceil(n/this.limit);
+            this.totalPages = Math.ceil(parseFloat(n)/this.limit);
             this.setInitPages();
         }
     },
@@ -156,6 +156,7 @@ export default {
 }
 .paginator-button.arrow .md-button-content {
     top: 2px;
+    color: #448aff;
 }
 </style>
   

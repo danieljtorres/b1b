@@ -3,7 +3,7 @@
                   
 
                    <md-card v-for="plan in plans"
-                        class="card col-4 md-layout-item  text-center ml-2 "
+                        :key="plan.id" class="card col-4 md-layout-item  text-center ml-2 "
                         style="padding-right: 0px;
                     padding-left: 0;">
                         <md-card-header>

@@ -61,11 +61,4 @@ export default {
 
 
 <style>
-
-.md-card{
-         margin-top:0% !important; 
-         width: 80%;
-         text-align: center;
-
-}
 </style>

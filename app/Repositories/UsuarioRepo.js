@@ -143,7 +143,10 @@ class UsuarioRepo {
                 where: { rol_id: 3 },
                 limit: limit,
                 offset: offset,
-                include: [{ model: sq.Cliente, as: '_cliente' }] 
+                include: [{ model: sq.Cliente, as: '_cliente', include: [
+                        { model: sq.Pais, as: '_pais' }
+                    ]
+                }] 
             });
 
             clientes = result.rows;
