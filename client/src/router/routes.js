@@ -56,6 +56,10 @@ const routes = [{
     name: "CustomerInvestments",
     component: CustomerInvestments
   },{
+    path: "investments/new",
+    name: "CustomerInvestmentsNew",
+    component: CustomerInvestmentsNew
+  },{
     path: "typography",
     name: "CustomerTypography",
     component: CustomerTypography
