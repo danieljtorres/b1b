@@ -6,7 +6,7 @@
 					<h1 class="md-title">Clientes</h1>
 				</div>
 
-				<md-field class="md-toolbar-section-end">
+				<md-field class="md-toolbar-section-end" style="max-width: 80px;margin-right: 12px;">
 					<md-select v-model="limit" name="limit" id="limit">
 						<md-option value="1">1</md-option>
 						<md-option value="5">5</md-option>

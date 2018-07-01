@@ -6,16 +6,19 @@
           <h1 class="md-title">Referidos</h1>
         </div>
 
-        <md-field md-clearable class="md-toolbar-section-end">
-          <md-select v-model="limit" name="limit" id="limit">
-            <md-option value="1">1</md-option>
-            <md-option value="3">3</md-option>
-            <md-option value="5">5</md-option>
-          </md-select>
-        </md-field>
-        <md-field md-clearable class="md-toolbar-section-end">
-          <md-input placeholder="Busca el nombre" v-model="search" @input="searchOnTable" />
-        </md-field>
+				<md-field class="md-toolbar-section-end" style="max-width: 80px;margin-right: 12px;">
+					<md-select v-model="limit" name="limit" id="limit">
+						<md-option value="1">1</md-option>
+						<md-option value="5">5</md-option>
+						<md-option value="10">10</md-option>
+						<md-option value="25">25</md-option>
+						<md-option value="50">50</md-option>
+						<md-option :value="totalRows">Todos</md-option>
+					</md-select>
+				</md-field>
+				<md-field md-clearable class="md-toolbar-section-end">
+					<md-input placeholder="Buscar..." v-model="search" @input="searchOnTable" />
+				</md-field>
       </md-table-toolbar>
 
       <md-table-empty-state

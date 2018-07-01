@@ -1,17 +1,13 @@
 <template>
    <div class="md-gutter">
         <div class="md-layout-item">
-            <md-tabs  >
-            
-                <md-tab id="tab-home" md-label="Asociados" md-icon="note_add">
-                
-                  <asociated-list></asociated-list>
-                </md-tab>
-
-                  <md-tab id="tab-home2" md-label="Por aprobar" md-icon="note_add">
-                
-                  <asociated-aprobation></asociated-aprobation>
-                </md-tab>
+            <md-tabs class="md-primary" md-alignment="centered">
+              <md-tab id="tab-home" md-label="Asociados" md-icon="note_add">
+                <asociated-list></asociated-list>
+              </md-tab>
+              <md-tab id="tab-home2" md-label="Por aprobar" md-icon="note_add">
+                <asociated-aprobation></asociated-aprobation>
+              </md-tab>
             </md-tabs>        
         </div>
     </div>

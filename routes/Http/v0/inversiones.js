@@ -17,7 +17,6 @@ const auth = Middlewares.AuthorizationMiddleware.auth;
 Router.get('/', auth([1,2]), Controllers.InversionController.solicitudes);
 Router.get('/:id/historial', auth([1,2]), Controllers.InversionController.historial);
 
-
 /**
  * POST
  */

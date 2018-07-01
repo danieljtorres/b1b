@@ -57,4 +57,17 @@ export default {};
 .md-tab {
     padding: 4px 1px !important;
 }
+
+.md-scrollbar.md-theme-default::-webkit-scrollbar-thumb {
+    background: #448aff !important;
+    background: #448aff !important;
+}
+
+.md-scrollbar::-webkit-scrollbar-thumb {
+    border-radius: 0px !important;
+}
+
+.md-card {
+  border-radius: 0px !important;
+}
 </style>

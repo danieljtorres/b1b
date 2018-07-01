@@ -38,7 +38,7 @@ export default {
   props: {
     title: {
       type: String,
-      default: "Paper Dashboard"
+      default: "Beareau 1B"
     },
     backgroundColor: {
       type: String,
@@ -127,5 +127,16 @@ export default {
   }
 };
 </script>
+
 <style>
+.wrapper .sidebar[data-background-color="black"]:after, .wrapper .sidebar[data-background-color="black"]:before {
+    background-color: #448aff !important;
+}
+a:not(.md-button):hover {
+    text-decoration: none !important;
+}
+
+.wrapper .sidebar[data-active-color="success"] .nav .nav-item.active > .nav-link {
+    color: #35495e !important;
+}
 </style>
