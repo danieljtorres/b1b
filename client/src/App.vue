@@ -53,4 +53,8 @@ export default {};
     transform: scale(1.2, 0.7);
   }
 }
+
+.md-tab {
+    padding: 4px 1px !important;
+}
 </style>

@@ -19,7 +19,7 @@ import CustomerTypography from "@/views/pages/customer/Typography.vue";
 import AdminInit from "@/views/pages/admin/Init.vue";
 import AdminProfile from "@/views/pages/admin/Profile.vue";
 import AdminPlans from "@/views/pages/admin/Plans.vue";
-import AdminUsers from "@/views/pages/admin/users.vue";
+import AdminUsers from "@/views/pages/admin/Users.vue";
 import AdminTableList from "@/views/pages/admin/TableList.vue";
 import AdminAsociated from  "@/views/pages/admin/Asociated.vue";
 import AdminAsociatedList from "@/views/pages/admin/Asociated/AsociatedList.vue"

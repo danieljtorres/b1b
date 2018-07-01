@@ -1,5 +1,5 @@
 <template>
-    <div class="md-layout md-alignment-center-center paginator-container">
+    <div v-if="total > 0" class="md-layout md-alignment-center-center paginator-container">
         <div class="md-layout-item md-large-size-5 md-medium-size-25 md-small-size-15">
             <md-button @click="back()" :disabled="page == 1" class="md-raised md-mini paginator-button arrow">
                 <i class="material-icons">navigate_before</i>
@@ -32,7 +32,7 @@
                 ...
             </md-button>
         </div>
-        <div class="md-layout-item md-large-size-5 md-medium-size-10 md-small-size-15">
+        <div v-if="totalPages > 1" class="md-layout-item md-large-size-5 md-medium-size-10 md-small-size-15">
             <md-button @click="setPage(totalPages)" class="md-raised paginator-button" v-bind:class="{'md-primary': page == totalPages}">
                 {{totalPages}}
             </md-button>
@@ -47,14 +47,15 @@
 <script>
 export default {
     props: {
-        total: Number,
+        total: Number | String,
         limit: Number | String,
     },
     data() {
         return {
             page: 1,
             totalPages: Math.ceil(this.total/this.limit),
-            pages: []
+            pages: [],
+            offset: 0,
         }
     },
     created() {
@@ -65,25 +66,27 @@ export default {
             this.page = 1;
             this.totalPages = Math.ceil(this.total/parseFloat(n));
             this.setInitPages();
+        },
+        total: function(n,o) {
+            this.page = 1;
+            this.totalPages = Math.ceil(parseFloat(n)/this.limit);
+            this.setInitPages();
         }
     },
     methods: {
         next() {
             if(this.page == this.totalPages) return;
             this.page++;
-            this.inOneStep();
-            this.pageChanged();
+            this.setPages();
         },
         back() {
             if(this.page == 1) return;
             this.page--;
-            this.inOneStep();
-            this.pageChanged();
+            this.setPages();
         },
         setPage(n = false) {
             if(n) this.page = n;
-            this.inOneStep();
-            this.pageChanged();
+            this.setPages();
         },
         setInitPages() {
             let sec = 2;
@@ -102,7 +105,9 @@ export default {
                 return;
             }
         },
-        inOneStep() {
+        setPages() {
+            this.offset = (this.page - 1) * this.limit;
+
             if(this.totalPages > 6) {
                 this.pages = [];
                 if (this.page > 2 && this.page < this.totalPages - 1) {
@@ -115,11 +120,9 @@ export default {
                     this.setInitPages();
                 }
             }
-        },
-        pageChanged() {
-            this.$emit('pageChanged', this.page);
-        }
 
+            this.$emit('pageChanged', this.offset);
+        }
     }
 };
 </script>
@@ -153,6 +156,7 @@ export default {
 }
 .paginator-button.arrow .md-button-content {
     top: 2px;
+    color: #448aff;
 }
 </style>
   

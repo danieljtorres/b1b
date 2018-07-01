@@ -27,6 +27,10 @@ App.enable('trust proxy');
 App.disable('x-powered-by');
 App.use(helmet());
 App.use(cors())
+App.use(function(req, res, next) {
+	res.header("Access-Control-Expose-Headers", "Last-Id, Total-Rows");
+	next();
+});
 App.use(bodyParser.json());
 App.use(bodyParser.urlencoded({ extended: false }));
 App.use(cookieParser());
