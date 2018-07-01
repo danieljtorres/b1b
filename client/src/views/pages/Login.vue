@@ -63,7 +63,8 @@
 <script>
 import authService from "../../_services/Auth.service";
 
-import NotificationTemplate from "../notifications/LoginSuccess";
+import NotificationSuccess from "../notifications/LoginSuccess";
+import NotificationError from "../notifications/LoginError";
 
 export default {
     data() {
@@ -86,22 +87,34 @@ export default {
             this.$validator.validate().then(result => {
                 if (!result) {
                     return false;
-                }
+                }   
+              
 
                 authService.logIn(this.user.usuario, this.user.password).then(response => {
                     this.$notify({
-                        component: NotificationTemplate,
+                        component: NotificationSuccess,
                         icon: "ti-check",
                         horizontalAlign: "right",
                         verticalAlign: "bottom",
                         type: this.type["success"]
                     });
 
+                        console.log(response);
                     setTimeout(() => {
                         this.$router.push({
                             name: response.to
                         });
                     }, 2500);
+                },err =>{console.log(err+"hola")
+
+                    this.$notify({
+                        component: NotificationError,
+                        icon: "ti-check",
+                        horizontalAlign: "right",
+                        verticalAlign: "bottom",
+                        type: this.type["warning"]
+                    });
+
                 });
             });
         }
