@@ -32,13 +32,34 @@
 				<md-table-cell md-label="Monto" md-sort-by="monto">
 					{{ item.monto }}
 				</md-table-cell>
-				<md-table-cell md-label="Voucher" md-sort-by="voucher">
-					{{ item.voucher }}
+				<md-table-cell md-label="Por cobrar" md-sort-by="_por_cobrar">
+					{{ item._por_cobrar }}
+				</md-table-cell>
+				<md-table-cell md-label="Voucher">
+					<a :href="item.voucher" target="_blank">Ver Voucher</a>
 				</md-table-cell>
                 <md-table-cell md-label="Plan" md-sort-by="_plan.titulo">
 					{{ item._plan.titulo }}
 				</md-table-cell>
-				
+				<md-table-cell md-label="Acciones">
+					<md-menu md-direction="bottom-end">
+						<md-button class="md-icon-button" md-menu-trigger>
+							<md-icon>menu</md-icon>
+						</md-button>
+					
+						<md-menu-content>
+							<md-menu-item v-if="item._por_cobrar > 0">
+								<span>Cobrar</span>
+								<md-icon>done</md-icon>
+							</md-menu-item>
+					
+							<md-menu-item>
+								<span>Historial</span>
+								<md-icon>view_list</md-icon>
+							</md-menu-item>
+						</md-menu-content>
+					</md-menu>
+				</md-table-cell>
 			</md-table-row>
 		</md-table>
 		<dm-paginator v-bind:total="totalRows" v-bind:limit="limit" @pageChanged="inPage($event)">

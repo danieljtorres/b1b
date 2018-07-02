@@ -1,4 +1,7 @@
 'use strict';
+
+var moment = require('moment');
+
 module.exports = (sequelize, DataTypes) => {
   var Inversion = sequelize.define('Inversion', {
     //id: { type: DataTypes.INTEGER, primaryKey: true },
@@ -11,13 +14,21 @@ module.exports = (sequelize, DataTypes) => {
     },
     voucher: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      get() {
+        return __httpUrl + '/api/v0/vouchers/' + this.getDataValue('voucher');
+      }
     },
     codigo: {
       type: DataTypes.STRING,
       allowNull: false
     },
-    aprobado: DataTypes.DATE,
+    aprobado: {
+      type: DataTypes.DATE,
+      get() {
+        return moment(this.getDataValue('aprobado')).format('MM/DD/YYYY');
+      }
+    },
     capitalizar: DataTypes.INTEGER,
     finalizado: DataTypes.DATE
   }, {

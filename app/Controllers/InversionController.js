@@ -10,9 +10,11 @@ class InversionController extends Controller {
         InversionRepo.solicitudes((err, datos) => {
             if (err) return res.status(500).json({data: null, err: err.message});
 
-            if (!datos.length) return res.status(404).json({data: []});
+            if (!datos.datos.length) return res.status(404).json({data: []});
 
-            return res.status(200).json({data: datos})
+            if (datos.cabeceras) res.set(datos.cabeceras);
+
+            return res.status(200).json({data: datos.datos})
         })
     }
 
@@ -20,9 +22,11 @@ class InversionController extends Controller {
         InversionRepo.todosPorUsuario(req, (err, datos) => {
             if (err) return res.status(500).json({data: null, err: err.message});
 
-            if (!datos.length) return res.status(404).json({data: []});
+            if (!datos.datos.length) return res.status(404).json({data: []});
 
-            return res.status(200).json({data: datos})
+            if (datos.cabeceras) res.set(datos.cabeceras);
+
+            return res.status(200).json({data: datos.datos})
         })
     }
 

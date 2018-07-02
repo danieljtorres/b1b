@@ -54,7 +54,7 @@ exports.deleteFile = (path) => {
 }
 
 exports.asyncForEach = async (array, callback) => {
-    if (!array) return;
+    //if (typeof array === 'undefined' || array === null) return;
     for (let index = 0; index < array.length; index++) {
         await callback(array[index], index)
     }
