@@ -25,7 +25,7 @@
                     <md-field>
                         <label>Monto</label>
                         <span class="md-prefix">$</span>
-                        <md-input v-model="investment.mount"></md-input>
+                        <md-input v-model="investmentData.mount"></md-input>
                     </md-field>
                     <md-button class="md-raised md-primary" @click="setDone('second', 'third')">Continuar</md-button>
                     <md-button class="md-raised md-primary" @click="setError()">Error!</md-button>
@@ -45,7 +45,7 @@
 
 <script>
 import PlanService from '@/_services/Plan.service';
-import InvestmentService from '@/_services/Investments.service';
+import InvestmentService from '@/_services/Investment.service';
 export default {
 
     data() {
@@ -104,10 +104,12 @@ export default {
         },
         setId(id){
             this.investmentData.planId = id;
+            console.log(this.investmentData.planId);
         },
         setVoucher(files){
             if (!files.length) return;
             this.investmentData.voucher = files[0];
+            console.log(this.investmentData.voucher);
         }
     }
 };

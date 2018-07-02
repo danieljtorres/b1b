@@ -12,7 +12,7 @@ import CustomerProfile from "@/views/pages/customer/Profile.vue";
 import CustomerNotifications from "@/views/pages/customer/Notifications.vue";
 import CustomerIcons from "@/views/pages/customer/Icons.vue";
 import CustomerInvestments from "@/views/pages/customer/Investments.vue";
-import CustomerInvestmentsNew from "@/views/pages/customer/InvestmentsNew.vue";
+import CustomerInvestmentsNew from "@/views/pages/customer/Investment/InvestmentsNew.vue";
 import CustomerTypography from "@/views/pages/customer/Typography.vue";
 
 // ADMIN PAGES-----

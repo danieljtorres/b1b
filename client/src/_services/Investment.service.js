@@ -14,6 +14,22 @@ class InvestmentService extends Service {
         });
     }
 
+    getInvestments(limit = 10, offset = 0) {
+
+        return super.api().get('auth/inversiones/activo',{
+            headers: {
+                'Authorization': super.token(),
+                
+            },
+            params: {
+                limit: limit,
+                offset: offset
+            }
+        });
+
+    }
+
+
 }
 
 export default new InvestmentService();

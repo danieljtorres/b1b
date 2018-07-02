@@ -31,7 +31,7 @@
         <md-table-cell md-label="Fecha" md-sort-by="fecha">{{ item.creado }}</md-table-cell>
         <md-table-cell md-label="Email" md-sort-by="email">{{ item._usuario.email }}</md-table-cell>
         <md-table-cell md-label="status" md-sort-by="status"> 
-              <md-button @click="approvalRequest(item.id)"class="md-primary md-raised">aprobar</md-button>
+              <md-button @click="approvalRequest(item.id)" class="md-primary md-raised">aprobar</md-button>
         </md-table-cell>
       </md-table-row>
     </md-table>

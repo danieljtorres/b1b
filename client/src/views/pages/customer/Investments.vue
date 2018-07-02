@@ -4,8 +4,9 @@
             <md-button to="/investments/new" class="md-raised md-primary table-action"><i class="fa fa-sign-in"></i>Nueva</md-button>
             <md-tabs>
                 <md-tab id="tab-pages" md-label="Activas" md-icon="pages">
-                    <div class="row">
-                    </div>
+                    
+                        <investment-list-active></investment-list-active>
+                    
                 </md-tab>
             </md-tabs>        
         </div>
@@ -13,8 +14,12 @@
 </template>
 
 <script>
+import InvestmentListActive from './Investment/InvestmentListActive.vue';
 
 export default {
+    components:{
+        InvestmentListActive
+    },
     data() {
         return {
         };
