@@ -89,7 +89,6 @@ class InversionRepo {
                     ]
                 });
 
-
                 inversiones[key] = inversiones[key].toJSON();
                 inversiones[key]._por_cobrar = porCobrar || 0;
                 inversiones[key]._pago_solicitado = porPagar || 0;
@@ -144,6 +143,8 @@ class InversionRepo {
     }
 
     async guardar(req, cb) {
+
+        console.log(req.files)
 
         const auth = req.auth;
         let body = req.body,

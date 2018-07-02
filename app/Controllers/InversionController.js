@@ -40,6 +40,9 @@ class InversionController extends Controller {
     }
 
     guardar(req, res) {
+
+        console.log(req)
+
         InversionRepo.guardar(req, (err, datos) => {
             if (err) return res.status(err.status || 500).json({data: null, err: err.message});
 

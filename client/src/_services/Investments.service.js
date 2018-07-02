@@ -6,14 +6,11 @@ class InvestmentService extends Service {
 
     newInvestment(form) {
 
-        return super.api().post('inversiones', form,
-        {
+        return super.api().post('inversiones', form, {
             headers: {
-
-                "Authorization": super.token(),
+                'Authorization': super.token(),
                 'Content-Type': 'multipart/form-data'
             }
-
         });
     }
 

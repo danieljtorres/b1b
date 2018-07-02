@@ -34,7 +34,7 @@
                 <md-step id="third" md-label="Detalles" :md-done.sync="third">
                     <md-field>
                         <label>Baucher</label>
-                        <md-file v-model="investment.voucher" @change="setVoucher($event.target.files);"/>
+                        <md-file @change="setVoucher($event.target.files);"/>
                     </md-field>
                     <md-button class="md-raised md-primary" @click="setDone('third');setInvestment();">Hecho!</md-button>
                 </md-step>
@@ -47,6 +47,7 @@
 import PlanService from '@/_services/Plan.service';
 import InvestmentService from '@/_services/Investments.service';
 export default {
+
     data() {
         return {
             active: 'first',
@@ -54,17 +55,19 @@ export default {
             second: false,
             third: false,
             secondStepError: null,
-            plans: "",
-            investment: {
-            planId: '',
-            mount : '',
-            voucher: ''
+            plans: [],
+            investmentData: {
+                planId: '',
+                mount : '',
+                voucher: ''
             },
            
         };
     },
 
-    created() { this.getPlansForInvestments(); },
+    created() { 
+        this.getPlansForInvestments(); 
+    },
 
     methods: {
         setDone (id, index) {
@@ -73,53 +76,39 @@ export default {
             this.secondStepError = null
 
             if (index) {
-            this.active = index
+                this.active = index
             }
         },
         setError () {
             this.secondStepError = 'Revisa la informacion!'
         },
         getPlansForInvestments() {
-            PlanService.getForInvestments().then(
-                response => {
-                    this.plans = response.data.data;
-                },
-                err => {
-                    console.log(err);
-                }
-            );
+            PlanService.getForInvestments().then(response => {
+                this.plans = response.data.data;
+            },err => {
+                console.log(err);
+            });
         },
-
         setInvestment() {
             const formData = new FormData();
-            formData.append('plan_id',this.investment.planId);
-            formData.append('monto',this.investment.mount);
-            formData.append('voucher',this.investment.voucher);
-            InvestmentService.newInvestment(formData).then(
-                response => {
-                    console.log(response);
-                    alert("bieenn");
-                },
-                err => {
-                    console.log(err);
-                    alert("error");
-                }
-            );
-        },
 
+            formData.append('plan_id',this.investmentData.planId);
+            formData.append('monto',this.investmentData.mount);
+            formData.append('voucher',this.investmentData.voucher, this.investmentData.voucher.name);
+            
+            InvestmentService.newInvestment(formData).then(response => {
+                console.log(response);
+            }, err => {
+                console.log(err);
+            });
+        },
         setId(id){
-            this.planId = id;
-            console.log(this.planId);
+            this.investmentData.planId = id;
         },
         setVoucher(files){
             if (!files.length) return;
-            this.investment.voucher = files[0].name;
-            
-           
+            this.investmentData.voucher = files[0];
         }
-
-
-
     }
 };
 </script>
