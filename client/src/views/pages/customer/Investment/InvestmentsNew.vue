@@ -55,7 +55,7 @@ export default {
             second: false,
             third: false,
             secondStepError: null,
-            plans: [],
+            plans: '',
             investmentData: {
                 planId: '',
                 mount : '',

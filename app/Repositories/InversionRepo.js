@@ -12,32 +12,52 @@ const _he = require('app/Helpers');
 
 class InversionRepo {
 
-    async solicitudes(cb) {
+    async solicitudes(req, cb) {
 
-        let inversiones;
+        let query = req.query;
+
+        let result, inversiones, totalRows, limit, offset;
+
+        limit = parseInt(query.limit) || 10;
+        offset = parseInt(query.offset) || 0;
 
         try {
-            inversiones = await sq.Inversion.findAll({
+            result = await sq.Inversion.findAll({
                 where: { estado_id: 1 },
+                limit: limit,
+                offset: offset,
                 include: [
                     { model: sq.Plan, as: '_plan' },
                     { model: sq.Estado, as: '_estado' }
                 ] 
             });
+
+            inversiones = result.rows;
+            totalRows = result.count;
+
         } catch (error) {
             cb(error);
             return null;
         }
 
-        cb(null, inversiones);
+        cb(null, {
+            datos : inversiones,
+            cabeceras: {
+                "Total-Rows": totalRows
+            }
+        });
     }
 
     async todosPorUsuario(req, cb) {
 
         const auth = req.auth;
-        let params = req.params;
 
-        let usuario, inversiones, id, includeEstado;
+        let query = req.query, params = req.params;
+
+        let result, usuario, inversiones, totalRows, id, includeEstado, limit, offset;
+
+        limit = parseInt(query.limit) || 10;
+        offset = parseInt(query.offset) || 0;
         
         if (params.id && [1,2].indexOf(auth.rol) != -1) {
             id = params.id;
@@ -59,13 +79,18 @@ class InversionRepo {
                 return null;
             }
 
-            inversiones = await sq.Inversion.findAll({ 
+            result = await sq.Inversion.findAll({ 
                 where: { usuario_id: usuario.id },
+                limit: limit,
+                offset: offset,
                 include: [
                     { model: sq.Plan, as: '_plan' },
                     includeEstado,
                 ] 
             });
+
+            inversiones = result.rows;
+            totalRows = result.count;
 
             await _he.asyncForEach(inversiones, async (inversion, key) => {
                 let porCobrar = await sq.Rendimiento.sum('rendimiento.monto', { 
@@ -98,7 +123,12 @@ class InversionRepo {
             return null;
         }
 
-        cb(null, inversiones);
+        cb(null,  {
+            datos : inversiones,
+            cabeceras: {
+                "Total-Rows": totalRows
+            }
+        });
     }
 
     async historial(req, cb) {

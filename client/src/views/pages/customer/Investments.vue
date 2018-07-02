@@ -32,7 +32,7 @@ export default {
 
 
 <style>
-    md-button.table-action {
+    .md-button.table-action {
         margin-left: 0 !important;
     }
 </style>

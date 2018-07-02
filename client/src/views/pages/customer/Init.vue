@@ -1,93 +1,9 @@
 <template>
-<div>
-
-    <!--Stats cards-->
-    <div class="row">
-
-        <!-- Card group -->
-        <div class="card-group">
-
-            <!-- Card -->
-            <div class="card mb-4">
-
-                <!-- Card image -->
-
-                <!-- Card content -->
-                <div class="card-body">
-
-                    <!-- Title -->
-                    <h4 class="card-title">ser asociado</h4>
-                    <!-- Text -->
-                    <p class="card-text">Texto explicativo.</p>
-                    <!-- Provides extra visual weight and identifies the primary action in a set of buttons -->
-                    <button
-                        type="button"
-                        v-on:click="associate"
-                        class="btn btn-primary btn-md"
-                    >solicitar</button>
-
-                </div>
-                <!-- Card content -->
-
-            </div>
-            <!-- Card -->
-
-            <!-- Card -->
-            <div class="card mb-4">
-
-                <!-- Card image -->
-
-                <!-- Card content -->
-                <div class="card-body">
-                    <!-- Title -->
-                    <h4 class="card-title">Card title</h4>
-                    <!-- Text -->
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                    <!-- Provides extra visual weight and identifies the primary action in a set of buttons -->
-                    <button
-                        type="button"
-                        class="btn btn-primary btn-md"
-                    >Read more</button>
-
-                </div>
-                <!-- Card content -->
-
-            </div>
-            <!-- Card -->
-
-            <!-- Card -->
-            <div class="card mb-4">
-
-                <!-- Card image -->
-
-                <!-- Card content -->
-                <div class="card-body">
-
-                    <!-- Title -->
-                    <h4 class="card-title">Card title</h4>
-                    <!-- Text -->
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                    <!-- Provides extra visual weight and identifies the primary action in a set of buttons -->
-                    <button
-                        type="button"
-                        class="btn btn-primary btn-md"
-                    >Read more</button>
-
-                </div>
-                <!-- Card content -->
-
-            </div>
-            <!-- Card -->
-
-        </div>
-        <!-- Card group -->
-
+    <div class="md-layout md-gutter">
+        <div class="md-layout-item">1</div>
+        <!--<div class="md-layout-item">2</div>
+        <div class="md-layout-item">3</div>-->
     </div>
-
-    <!--Charts-->
-  
-
-</div>
 </template>
 
 <script>

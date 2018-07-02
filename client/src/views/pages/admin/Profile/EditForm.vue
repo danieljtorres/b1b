@@ -1,6 +1,7 @@
 <template>
 
     <div>
+        <md-dialog-prompt :md-active.sync="active"/>
        <modal name="change-password">
       <div class="box">
         <div class="box-part" id="bp-left">
