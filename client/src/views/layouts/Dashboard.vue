@@ -85,4 +85,13 @@ export default {
 </script>
 
 <style lang="scss">
+.main-panel > .content {
+    padding: 30px 15px;
+    min-height: calc(100% - 149px) !important;
+    overflow: auto;
+}
+
+.main-panel {
+  height: 100% !important;
+}
 </style>

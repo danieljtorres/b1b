@@ -19,7 +19,7 @@ class UsuarioController extends Controller {
     }
 
     admins(req, res) {
-        UsuarioRepo.admins((err, datos) => {
+        UsuarioRepo.admins(req, (err, datos) => {
             if (err) return res.status(500).json({data: null, err: err.message});
 
             if (!datos.datos.length) return res.status(404).json({data: []});
@@ -43,7 +43,7 @@ class UsuarioController extends Controller {
     }
 
     asociados(req, res) {
-        UsuarioRepo.asociados((err, datos) => {
+        UsuarioRepo.asociados(req, (err, datos) => {
             if (err) return res.status(500).json({data: null, err: err.message});
 
             if (!datos.datos.length) return res.status(404).json({data: []});

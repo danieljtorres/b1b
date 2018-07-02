@@ -25,7 +25,7 @@
                     <md-field>
                         <label>Monto</label>
                         <span class="md-prefix">$</span>
-                        <md-input v-model="investment.mount"></md-input>
+                        <md-input v-model="investmentData.mount"></md-input>
                     </md-field>
                     <md-button class="md-raised md-primary" @click="setDone('second', 'third')">Continuar</md-button>
                     <md-button class="md-raised md-primary" @click="setError()">Error!</md-button>
@@ -55,7 +55,7 @@ export default {
             second: false,
             third: false,
             secondStepError: null,
-            plans: [],
+            plans: '',
             investmentData: {
                 planId: '',
                 mount : '',

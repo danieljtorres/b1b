@@ -112,28 +112,44 @@ class UsuarioRepo {
         cb(null, usuarios);
     }
 
-    async admins(cb) {
+    async admins(req, cb) {
         
-        let usuarios;
+        let query = req.query;
+
+        let result, usuarios, totalRows, limit, offset;
+
+        limit = parseInt(query.limit) || 10;
+        offset = parseInt(query.offset) || 0;
 
         try {
-            usuarios = await sq.Usuario.findAll({ 
+            result = await sq.Usuario.findAll({ 
                 where: { rol_id: 2 },
+                limit: limit,
+                offset: offset,
                 include: [{ model: sq.Cliente, as: '_cliente' }] 
             });
+
+            usuarios = result.rows;
+            totalRows = result.count;
+
         } catch (error) {
             cb(error);
             return null;
         }
 
-        cb(null, usuarios);
+        cb(null, {
+            datos : usuarios,
+            cabeceras: {
+                "Total-Rows": totalRows
+            }
+        });
     }
 
     async clientes(req, cb) {
 
         let query = req.query;
 
-        let result, clientes, totalClientes, nReferidos, nInversiones = {}, limit, offset;
+        let result, usuarios, totalRows, nReferidos, nInversiones = {}, limit, offset;
 
         limit = parseInt(query.limit) || 10;
         offset = parseInt(query.offset) || 0;
@@ -149,23 +165,23 @@ class UsuarioRepo {
                 }] 
             });
 
-            clientes = result.rows;
-            totalClientes = result.count;
+            usuarios = result.rows;
+            totalRows = result.count;
 
-            await _he.asyncForEach(clientes, async (usuario, key) => {
+            await _he.asyncForEach(usuarios, async (usuario, key) => {
 
-                clientes[key] = clientes[key].toJSON();
+                usuarios[key] = usuarios[key].toJSON();
 
-                let id = clientes[key].id;
+                let id = usuarios[key].id;
 
                 nReferidos = await sq.Usuario.count({ where: { referencia : id } });
-                clientes[key]._n_referidos = nReferidos;
+                usuarios[key]._n_referidos = nReferidos;
 
                 nInversiones.total = await sq.Inversion.count({ where: { usuario_id : id, estado_id: { [Op.ne]: 4 } } });
                 nInversiones.solicitudes = await sq.Inversion.count({ where: { usuario_id : id, estado_id: 1 } });
                 nInversiones.activas = await sq.Inversion.count({ where: { usuario_id : id, estado_id: 2 } });
                 nInversiones.finalizadas = await sq.Inversion.count({ where: { usuario_id : id, estado_id: 3 } });
-                clientes[key]._n_inversiones = nInversiones;
+                usuarios[key]._n_inversiones = nInversiones;
             });
 
         } catch (error) {
@@ -174,25 +190,35 @@ class UsuarioRepo {
         }
 
         cb(null, {
-            datos : clientes,
+            datos : usuarios,
             cabeceras: {
-                "Total-Rows": totalClientes
+                "Total-Rows": totalRows
             }
         });
     }
 
-    async asociados(cb) {
-                
-        let usuarios, nReferidos, nInversiones = {};
+    async asociados(req, cb) {
+            
+        let query = req.query;
+
+        let result, usuarios, totalRows, nReferidos, nInversiones = {}, limit, offset;
+
+        limit = parseInt(query.limit) || 10;
+        offset = parseInt(query.offset) || 0;
 
         try {
-            usuarios = await sq.Usuario.findAll({ 
+            result = await sq.Usuario.findAll({ 
                 where: { rol_id: 3 },
+                limit: limit,
+                offset: offset,
                 include: [
                     { model: sq.Asociacion, as: '_asociacion', where: { usuario_id: Sequelize.col('Usuario.id') } },
                     { model: sq.Cliente, as: '_cliente' }
                 ] 
             });
+
+            usuarios = result.rows;
+            totalRows = result.count;
 
             await _he.asyncForEach(usuarios, async (usuario, key) => {
 
@@ -215,17 +241,24 @@ class UsuarioRepo {
             return null;
         }
 
-        cb(null, usuarios);
+        cb(null, {
+            datos : usuarios,
+            cabeceras: {
+                "Total-Rows": totalRows
+            }
+        });
     }
 
     async referidosPorUsuario(req, cb) {
 
         const auth = req.auth;
 
-        let params = req.params,
-            id;
+        let query = req.query, params = req.params;
             
-        let usuario, usuarios, nReferidos, nInversiones = {}, totalInvertido;
+        let id, usuario, result, usuarios, totalRows, nReferidos, nInversiones = {}, totalInvertido, limit, offset;
+
+        limit = parseInt(query.limit) || 10;
+        offset = parseInt(query.offset) || 0;
 
         if (params.id && auth.rol == 3) {
             cb(null, 'PERMISOS_INVALIDOS');
@@ -255,10 +288,15 @@ class UsuarioRepo {
                 return null;
             }
 
-            usuarios = await sq.Usuario.findAll({ 
+            result = await sq.Usuario.findAll({ 
                 where: { referencia: id },
+                limit: limit,
+                offset: offset,
                 include: [{ model: sq.Cliente, as: '_cliente' }]
             });
+
+            usuarios = result.rows;
+            totalRows = result.count;
 
             await _he.asyncForEach(usuarios, async (usuario, key) => {
 
@@ -281,7 +319,12 @@ class UsuarioRepo {
             return null;
         }
 
-        cb(null, usuarios);
+        cb(null, {
+            datos : usuarios,
+            cabeceras: {
+                "Total-Rows": totalRows
+            }
+        });
     }
 
     async guardar(req, cb) {
@@ -450,11 +493,7 @@ class UsuarioRepo {
             return null;  
         }
 
-        console.log(avatar);
-
         const nombreAvatar = _he.randomStr(16) + '_' + auth.id + '.' + avatar.type.split('/')[1];
-        
-        console.log(nombreAvatar)
         
         const temporal     = avatar.path;
         const pathObjetivo = '/resources/avatares/' ;
