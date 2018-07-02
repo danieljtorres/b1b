@@ -15,8 +15,7 @@ module.exports = (sequelize, DataTypes) => {
 		correlativo: {
 			type: DataTypes.INTEGER,
 			allowNull: false
-		},
-		pagado: DataTypes.DATE
+		}
 	}, {
 		underscored: true,
 		//paranoid: true,
