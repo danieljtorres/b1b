@@ -1,5 +1,5 @@
 <template>
-   <div class="md-gutter">
+   <div class="md-layout md-gutter">
         <div class="md-layout-item">
             <md-tabs class="md-primary" md-alignment="centered">
                 <md-tab id="tab-home" md-label="Clientes" md-icon="note_add">

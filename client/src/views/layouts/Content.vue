@@ -1,10 +1,8 @@
 <template>
   <div class="content">
-    <div class="container-fluid">
-        <transition name="fade" mode="out-in">
-          <router-view></router-view>
-        </transition>
-    </div>
+      <transition name="fade" mode="out-in">
+        <router-view></router-view>
+      </transition>
   </div>
 </template>
 <script>
@@ -17,4 +15,9 @@ export default {};
 .fade-enter, .fade-leave-to{
   opacity: 0;
 }
+
+.main-panel > .content {
+  padding: 30px 0px;
+}
+
 </style>

@@ -66,7 +66,7 @@ class InversionRepo {
         }
 
         if (params.estado) {
-           includeEstado = { model: sq.Estado, as: '_estado', where: { nombre: params.estado.toUpperCase() } };
+            includeEstado = { model: sq.Estado, as: '_estado', where: { nombre: params.estado.toUpperCase() } };
         } else {
             includeEstado = { model: sq.Estado, as: '_estado', where: { nombre: 'ACTIVO' } };
         }
@@ -79,7 +79,7 @@ class InversionRepo {
                 return null;
             }
 
-            result = await sq.Inversion.findAll({ 
+            result = await sq.Inversion.findAndCountAll({ 
                 where: { usuario_id: usuario.id },
                 limit: limit,
                 offset: offset,
@@ -119,6 +119,8 @@ class InversionRepo {
                 inversiones[key]._pago_solicitado = porPagar || 0;
             });
         } catch (error) {
+            console.log(error)
+
             cb(error);
             return null;
         }
@@ -163,6 +165,31 @@ class InversionRepo {
                 cb(null, 'INVERSION_NO_ENCONTRADO');
                 return null;
             }
+
+            let porCobrar = await sq.Rendimiento.sum('rendimiento.monto', { 
+                where: { 
+                    inversion_id: inversion.id,
+                    [Op.or]: {
+                        '$_factura.pagado$': null
+                    }
+                },
+                include: [
+                    { model: sq.Factura, as: '_factura' }
+                ]
+            });
+
+            let porPagar = await sq.Rendimiento.sum('rendimiento.monto', { 
+                where: { 
+                    inversion_id: inversion.id
+                },
+                include: [
+                    { model: sq.Factura, as: '_factura', where: { pagado: null } }
+                ]
+            });
+
+            inversion = inversion.toJSON();
+            inversion._por_cobrar = porCobrar || 0;
+            inversion._pago_solicitado = porPagar || 0;
 
         } catch (error) {
             cb(error);

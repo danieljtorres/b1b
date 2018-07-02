@@ -27,7 +27,7 @@ module.exports = (sequelize, DataTypes) => {
 
 	});
 	Rendimiento.associate = function (models) {
-		Rendimiento.belongsTo(models.Inversion, { foreignKey: 'inversion_id', as: '_inversion' });
+		Rendimiento.belongsTo(models.Inversion, { foreignKey: 'codigo_inversion', targetKey: 'codigo', as: '_inversion' } );
 		Rendimiento.belongsTo(models.Factura, { foreignKey: 'codigo_factura', targetKey: 'codigo', as: '_factura' });
 	};
 	return Rendimiento;

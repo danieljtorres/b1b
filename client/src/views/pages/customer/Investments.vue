@@ -1,11 +1,11 @@
 <template>
-    <div class="md-layout md-gutter">
+    <div class="md-layout-item md-layout md-gutter">
         <div class="md-layout-item">
             <md-button to="/investments/new" class="md-raised md-primary table-action"><i class="fa fa-sign-in"></i>Nueva</md-button>
             <md-tabs>
                 <md-tab id="tab-pages" md-label="Activas" md-icon="pages">
                     
-                        <investment-list-active></investment-list-active>
+                    <investment-list-active></investment-list-active>
                     
                 </md-tab>
             </md-tabs>        

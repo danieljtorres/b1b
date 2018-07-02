@@ -122,7 +122,7 @@ class UsuarioRepo {
         offset = parseInt(query.offset) || 0;
 
         try {
-            result = await sq.Usuario.findAll({ 
+            result = await sq.Usuario.findAndCountAll({ 
                 where: { rol_id: 2 },
                 limit: limit,
                 offset: offset,
@@ -207,7 +207,7 @@ class UsuarioRepo {
         offset = parseInt(query.offset) || 0;
 
         try {
-            result = await sq.Usuario.findAll({ 
+            result = await sq.Usuario.findAndCountAll({ 
                 where: { rol_id: 3 },
                 limit: limit,
                 offset: offset,
@@ -288,7 +288,7 @@ class UsuarioRepo {
                 return null;
             }
 
-            result = await sq.Usuario.findAll({ 
+            result = await sq.Usuario.findAndCountAll({ 
                 where: { referencia: id },
                 limit: limit,
                 offset: offset,
