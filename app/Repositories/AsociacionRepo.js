@@ -20,7 +20,8 @@ class AsociacionRepo {
         try {
             asociaciones = await sq.Asociacion.findAll({
                 where: { aprobado: null },
-                include: [{model: sq.Usuario, as: '_usuario', where: { id: Sequelize.col('Asociacion.usuario_id') } }, {model: sq.Plan, as: '_plan'}]
+                include: [{model: sq.Usuario, as: '_usuario', where: { id: Sequelize.col('Asociacion.usuario_id') } }, {model: sq.Plan, as: '_plan'}],
+                order: [['id', 'DESC']]
             });
         } catch (error) {
             cb(error);

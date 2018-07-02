@@ -29,7 +29,8 @@ class InversionRepo {
                 include: [
                     { model: sq.Plan, as: '_plan' },
                     { model: sq.Estado, as: '_estado' }
-                ] 
+                ],
+                order: [['id', 'DESC']]
             });
 
             inversiones = result.rows;
@@ -86,7 +87,8 @@ class InversionRepo {
                 include: [
                     { model: sq.Plan, as: '_plan' },
                     includeEstado,
-                ] 
+                ],
+                order: [['id', 'DESC']]
             });
 
             inversiones = result.rows;
@@ -154,11 +156,12 @@ class InversionRepo {
                     { model: sq.Plan, as: '_plan' },
                     { model: sq.Factura, as: '_facturas' },
                     { model: sq.Estado, as: '_estado' },
-                    { model: sq.Rendimiento, as: '_rendimientos', include: [
+                    { model: sq.Rendimiento, as: '_rendimientos_x_codigo', include: [
                             { model: sq.Factura, as: '_factura' }
                         ] 
                     }
-                ]
+                ],
+                order: [[{ model: sq.Rendimiento, as: '_rendimientos_x_codigo' }, 'id', 'DESC']]
             });
 
             if (inversion == null) {
@@ -192,6 +195,7 @@ class InversionRepo {
             inversion._pago_solicitado = porPagar || 0;
 
         } catch (error) {
+            console.log(error)
             cb(error);
             return null;
         }
@@ -420,3 +424,7 @@ const generarCodigo = async (id) => {
 }
 
 module.exports = new InversionRepo;
+
+
+
+"Executing (default): SELECT `Inversion`.`id`, `Inversion`.`usuario_id`, `Inversion`.`plan_id`, `Inversion`.`estado_id`, `Inversion`.`monto`, `Inversion`.`voucher`, `Inversion`.`codigo`, `Inversion`.`aprobado`, `Inversion`.`capitalizar`, `Inversion`.`finalizado`, `Inversion`.`creado`, `Inversion`.`actualizado`, `Inversion`.`borrado`, `_plan`.`id` AS `_plan.id`, `_plan`.`titulo` AS `_plan.titulo`, `_plan`.`tipo` AS `_plan.tipo`, `_plan`.`descripcion` AS `_plan.descripcion`, `_plan`.`caracteristicas` AS `_plan.caracteristicas`, `_plan`.`porcentaje` AS `_plan.porcentaje`, `_plan`.`tiempo` AS `_plan.tiempo`, `_plan`.`min` AS `_plan.min`, `_plan`.`max` AS `_plan.max`, `_plan`.`creado` AS `_plan.creado`, `_plan`.`actualizado` AS `_plan.actualizado`, `_plan`.`borrado` AS `_plan.borrado`, `_facturas`.`id` AS `_facturas.id`, `_facturas`.`inversion_id` AS `_facturas.inversion_id`, `_facturas`.`monto` AS `_facturas.monto`, `_facturas`.`codigo` AS `_facturas.codigo`, `_facturas`.`numero_transaccion` AS `_facturas.numero_transaccion`, `_facturas`.`pagado` AS `_facturas.pagado`, `_facturas`.`creado` AS `_facturas.creado`, `_estado`.`id` AS `_estado.id`, `_estado`.`nombre` AS `_estado.nombre`, `_rendimientos_x_codigo`.`id` AS `_rendimientos_x_codigo.id`, `_rendimientos_x_codigo`.`inversion_id` AS `_rendimientos_x_codigo.inversion_id`, `_rendimientos_x_codigo`.`monto` AS `_rendimientos_x_codigo.monto`, `_rendimientos_x_codigo`.`codigo_inversion` AS `_rendimientos_x_codigo.codigo_inversion`, `_rendimientos_x_codigo`.`codigo_factura` AS `_rendimientos_x_codigo.codigo_factura`, `_rendimientos_x_codigo`.`correlativo` AS `_rendimientos_x_codigo.correlativo`, `_rendimientos_x_codigo`.`creado` AS `_rendimientos_x_codigo.creado`, `_rendimientos_x_codigo->_factura`.`id` AS `_rendimientos_x_codigo._factura.id`, `_rendimientos_x_codigo->_factura`.`inversion_id` AS `_rendimientos_x_codigo._factura.inversion_id`, `_rendimientos_x_codigo->_factura`.`monto` AS `_rendimientos_x_codigo._factura.monto`, `_rendimientos_x_codigo->_factura`.`codigo` AS `_rendimientos_x_codigo._factura.codigo`, `_rendimientos_x_codigo->_factura`.`numero_transaccion` AS `_rendimientos_x_codigo._factura.numero_transaccion`, `_rendimientos_x_codigo->_factura`.`pagado` AS `_rendimientos_x_codigo._factura.pagado`, `_rendimientos_x_codigo->_factura`.`creado` AS `_rendimientos_x_codigo._factura.creado` FROM `inversiones` AS `Inversion` LEFT OUTER JOIN `planes` AS `_plan` ON `Inversion`.`plan_id` = `_plan`.`id` AND (`_plan`.`borrado` > '2018-07-02 22:38:54' OR `_plan`.`borrado` IS NULL) LEFT OUTER JOIN `facturas` AS `_facturas` ON `Inversion`.`id` = `_facturas`.`inversion_id` LEFT OUTER JOIN `estados` AS `_estado` ON `Inversion`.`estado_id` = `_estado`.`id` LEFT OUTER JOIN `rendimientos` AS `_rendimientos_x_codigo` ON `Inversion`.`id` = `_rendimientos_x_codigo`.`codigo_inversion` LEFT OUTER JOIN `facturas` AS `_rendimientos_x_codigo->_factura` ON `_rendimientos_x_codigo`.`codigo_factura` = `_rendimientos_x_codigo->_factura`.`codigo` WHERE ((`Inversion`.`borrado` > '2018-07-02 22:38:54' OR `Inversion`.`borrado` IS NULL) AND (`Inversion`.`id` = '15' AND `Inversion`.`usuario_id` = 51))"

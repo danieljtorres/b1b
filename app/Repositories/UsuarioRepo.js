@@ -126,7 +126,8 @@ class UsuarioRepo {
                 where: { rol_id: 2 },
                 limit: limit,
                 offset: offset,
-                include: [{ model: sq.Cliente, as: '_cliente' }] 
+                include: [{ model: sq.Cliente, as: '_cliente' }],
+                order: [['id', 'DESC']]
             });
 
             usuarios = result.rows;
@@ -162,7 +163,8 @@ class UsuarioRepo {
                 include: [{ model: sq.Cliente, as: '_cliente', include: [
                         { model: sq.Pais, as: '_pais' }
                     ]
-                }] 
+                }],
+                order: [['id', 'DESC']]
             });
 
             usuarios = result.rows;
@@ -214,7 +216,8 @@ class UsuarioRepo {
                 include: [
                     { model: sq.Asociacion, as: '_asociacion', where: { usuario_id: Sequelize.col('Usuario.id') } },
                     { model: sq.Cliente, as: '_cliente' }
-                ] 
+                ],
+                order: [['id', 'DESC']]
             });
 
             usuarios = result.rows;
@@ -292,7 +295,8 @@ class UsuarioRepo {
                 where: { referencia: id },
                 limit: limit,
                 offset: offset,
-                include: [{ model: sq.Cliente, as: '_cliente' }]
+                include: [{ model: sq.Cliente, as: '_cliente' }],
+                order: [['id', 'DESC']]
             });
 
             usuarios = result.rows;

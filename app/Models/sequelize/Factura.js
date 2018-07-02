@@ -28,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
 	});
 	Factura.associate = function (models) {
 		Factura.belongsTo(models.Inversion, { foreignKey: 'inversion_id', as: '_inversion' });
-		Factura.hasMany(models.Rendimiento, { foreignKey: 'codigo_factura', targetKey: 'codigo', as: '_rendimientos' });
+		Factura.hasMany(models.Rendimiento, { foreignKey: 'codigo_factura', sourceKey: 'codigo', as: '_rendimientos' });
 	};
 	return Factura;
 };
