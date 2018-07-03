@@ -28,6 +28,16 @@ class InvestmentService extends Service {
         });
 
     }
+    getInvestment(id) {
+
+        return super.api().get('auth/inversiones/'+id+'/historial',{
+            headers: {
+                'Authorization': super.token(),
+            }
+           
+        });
+
+    }
 
 
 }

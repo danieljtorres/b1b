@@ -20,7 +20,8 @@ import 'vue-material/dist/theme/default.css' // This line here
 import VuePreload from 'vue-preload'
 
 
-Vue.use(VuePreload)
+Vue.use(VuePreload);
+
 // with options
 Vue.use(VuePreload, {
   // show the native progress bar
@@ -46,6 +47,7 @@ const dictionary = {
     }
   }
 };
+
  
 Vue.use(PaperDashboard);
 // instanciando componentes externos a la plantilla
@@ -55,6 +57,11 @@ Vue.component('dm-paginator', dmPaginator);
 Vue.use(VModal);
 Vue.use(VeeValidate, {events: ''});
 
+Vue.filter('formatDate', function(value) {
+  if (value) {
+    return value.split("T")[0];
+  }
+});
 
 /* eslint-disable no-new */
 new Vue({

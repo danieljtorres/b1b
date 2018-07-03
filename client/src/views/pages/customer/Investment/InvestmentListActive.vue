@@ -53,8 +53,9 @@
 								<md-icon>done</md-icon>
 							</md-menu-item>
 					
-							<md-menu-item>
+							<md-menu-item :to="{ name: 'CustomerInvestmentRecord', params: {id:item.id } }" >
 								<span>Historial</span>
+								
 								<md-icon>view_list</md-icon>
 							</md-menu-item>
 						</md-menu-content>
@@ -73,7 +74,6 @@
     import UserService from "@/_services/User.service";
     import InvestmentService from '@/_services/Investment.service.js';
 
-
 	const toLower = text => {
 		return text.toString().toLowerCase()
 	}
@@ -86,6 +86,7 @@
 	}
 
 	export default {
+		
 		data: () => ({
 			search: null,
 			searched: [],

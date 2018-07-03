@@ -12,8 +12,10 @@ import CustomerProfile from "@/views/pages/customer/Profile.vue";
 import CustomerNotifications from "@/views/pages/customer/Notifications.vue";
 import CustomerIcons from "@/views/pages/customer/Icons.vue";
 import CustomerInvestments from "@/views/pages/customer/Investments.vue";
-import CustomerInvestmentsNew from "@/views/pages/customer/Investment/InvestmentsNew.vue";
+import CustomerInvestmentNew from "@/views/pages/customer/Investment/InvestmentNew.vue";
+import CustomerInvestmentRecord from "@/views/pages/customer/Investment/InvestmentRecord.vue";
 import CustomerTypography from "@/views/pages/customer/Typography.vue";
+
 
 // ADMIN PAGES-----
 import AdminInit from "@/views/pages/admin/Init.vue";
@@ -57,8 +59,12 @@ const routes = [{
     component: CustomerInvestments
   },{
     path: "investments/new",
-    name: "CustomerInvestmentsNew",
-    component: CustomerInvestmentsNew
+    name: "CustomerInvestmentNew",
+    component: CustomerInvestmentNew
+  },{
+    path: "investments/record/:id",
+    name: "CustomerInvestmentRecord",
+    component: CustomerInvestmentRecord
   },{
     path: "typography",
     name: "CustomerTypography",
