@@ -10,7 +10,7 @@ import NotFound from "@/views/pages/NotFound.vue";
 import CustomerInit from "@/views/pages/customer/Init.vue";
 import CustomerProfile from "@/views/pages/customer/Profile.vue";
 import CustomerNotifications from "@/views/pages/customer/Notifications.vue";
-import CustomerIcons from "@/views/pages/customer/Icons.vue";
+import CustomerReferrals from "@/views/pages/customer/Referrals.vue";
 import CustomerInvestments from "@/views/pages/customer/Investments.vue";
 import CustomerInvestmentNew from "@/views/pages/customer/Investment/InvestmentNew.vue";
 import CustomerInvestmentRecord from "@/views/pages/customer/Investment/InvestmentRecord.vue";
@@ -49,9 +49,9 @@ const routes = [{
     component: CustomerProfile
 
   },{
-    path: "icons",
-    name: "CustomerIcons",
-    component: CustomerIcons
+    path: "referrals",
+    name: "CustomerReferrals",
+    component: CustomerReferrals
 
   },{
     path: "investments",

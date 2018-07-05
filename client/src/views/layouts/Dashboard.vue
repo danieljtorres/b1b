@@ -8,8 +8,8 @@
       <template slot="links">
         <sidebar-link to="/home" name="INICIO" icon="home"/>
         <sidebar-link to="/profile" name="MI PERFIL" icon="account_box"/>
-        <sidebar-link to="/investments" name="Mis Inversiones" icon="book"/>
-        <sidebar-link to="/icons" name="USTOMER ICONS" icon="book"/>
+        <sidebar-link to="/investments" name="MIS INVERSIONES" icon="book"/>
+        <sidebar-link to="/referrals" name="MIS REFERIDOS" icon="book"/>
   
       </template>
 
