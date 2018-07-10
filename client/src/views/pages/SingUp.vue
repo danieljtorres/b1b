@@ -176,7 +176,7 @@ export default {
     CreateAcount() {
           
       axios
-        .post(`http://127.0.0.1:90/api/v0/clientes/`, {
+        .post(`http://144.202.44.43/api/v0/clientes/`, {
           pais_id: this.user.pais_id,
           nombres: this.user.nombres,
           apellidos: this.user.apellidos,

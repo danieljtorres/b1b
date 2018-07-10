@@ -132,7 +132,7 @@
         methods: {
 
             associate() {
-                let url = "http://127.0.0.1:90/api/v0/asociaciones"
+                let url = "http://144.202.44.43/api/v0/asociaciones"
 
                 axios({
                     method: 'post',

@@ -2,7 +2,7 @@ import axios from 'axios';
 import jwtDecode from 'jwt-decode';
 
 const api = axios.create({
-    baseURL: 'http://127.0.0.1:90/api/v0/'
+    baseURL: 'http://144.202.44.43/api/v0/'
 });
 
 export default class Service {
